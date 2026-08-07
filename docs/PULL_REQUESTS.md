@@ -373,8 +373,9 @@ Deploy FastAPI + Vite static site on Render (`uv sync` build), ship Blueprint/`r
 
 - **Status:** `ready_for_review`
 - **Branch:** `docs/pr6-reviewer-readme-roadmap`
-- **GitHub:** _(set when opened)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/8
 - **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR5 merged + public URLs known
 
 ### Scope
@@ -395,8 +396,7 @@ Deploy FastAPI + Vite static site on Render (`uv sync` build), ship Blueprint/`r
 
 ### Summary
 
-_(fill on open)_
-
+Ship reviewer-facing README (live URLs + manual checklist), expand post-MVP ROADMAP/PR log through PR10, and add Buffy-themed PDF fixtures for extract practice.
 ### Test plan
 
 - [ ] Spot-check README links open

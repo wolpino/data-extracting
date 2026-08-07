@@ -5,8 +5,8 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR6 — Docs + Buffy testdata + manual checklist
-- **Status:** `ready_for_review` — branch `docs/pr6-reviewer-readme-roadmap`
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/8
+- **Branch:** `docs/pr6-reviewer-readme-roadmap`
 
 ## Done
 
