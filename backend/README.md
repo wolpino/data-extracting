@@ -81,3 +81,5 @@ CORS: set `CORS_ORIGINS` to a comma-separated allowlist (default `http://localho
 Deploy: see root [render.yaml](../render.yaml) and [README.md](../README.md). On Render, root directory is `backend/` (needs `uv.lock`); build with `uv sync --frozen`, start with `uv run uvicorn …`.
 
 Copy env placeholders from the repo root `.env.example`. Do not commit real secrets.
+
+`SEED_DEMO_DATA=true` enables the Buffy Summers starter Order on API startup (local convenience). Default is off — keep it false on Render.
