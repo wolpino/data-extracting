@@ -23,8 +23,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | PR | Title | Status |
 |----|-------|--------|
 | [PR0](#pr0--spec-decisions-agent-process) | Spec, decisions, agent process | `merged` |
-| [PR1](#pr1--scaffold) | Backend + frontend scaffold | `ready_for_review` |
-| [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `planned` |
+| [PR1](#pr1--scaffold) | Backend + frontend scaffold | `merged` |
+| [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `ready_for_review` |
 | [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `planned` |
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `planned` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `planned` |
@@ -81,11 +81,12 @@ Establish product/process source of truth before scaffolding so agents do not du
 
 ## PR1 — Scaffold
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `scaffold/pr1`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/2
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR0 approved
 
 ### Scope
@@ -127,9 +128,11 @@ Scaffold monorepo shells: uv-managed FastAPI backend with health routes and pyda
 
 ## PR2 — Order CRUD + activity log
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review`
+- **Branch:** `feature/pr2-order-crud`
+- **GitHub:** _(filled after open)_
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR1 merged/approved
 
 ### Scope
@@ -138,33 +141,35 @@ Scaffold monorepo shells: uv-managed FastAPI backend with health routes and pyda
 - Minimal Order model + Pydantic schemas; full CRUD under `/api/v1/orders`
 - Activity log model + writes on demo routes (metadata only; never PDF bytes)
 - Filename sanitization for `source_filename` when provided
-- Optional tiny Buffy seed for local smoke
+- Buffy Summers demo seed on startup (idempotent)
 
 ### Acceptance criteria
 
-- [ ] Order fields: `id`, `first_name`, `last_name`, `date_of_birth`, optional `source_filename`, timestamps
-- [ ] `GET/POST /api/v1/orders` and `GET/PUT/PATCH/DELETE /api/v1/orders/{id}` work with Pydantic validation
-- [ ] Invalid payloads return clear 4xx (structured errors preferred)
-- [ ] Activity rows recorded for list/get/create/update/delete (action, entity, timestamp, request metadata)
-- [ ] Activity log does **not** store file/PDF bytes
-- [ ] `source_filename` sanitized (basename only; path segments rejected)
-- [ ] DB created via SQLAlchemy `create_all`; default SQLite works locally
-- [ ] OpenAPI/curl smoke of full CRUD succeeds
+- [x] Order fields: `id`, `first_name`, `last_name`, `date_of_birth`, optional `source_filename`, timestamps
+- [x] `GET/POST /api/v1/orders` and `GET/PUT/PATCH/DELETE /api/v1/orders/{id}` work with Pydantic validation
+- [x] Invalid payloads return clear 4xx (structured errors preferred)
+- [x] Activity rows recorded for list/get/create/update/delete (action, entity, timestamp, request metadata)
+- [x] Activity log does **not** store file/PDF bytes
+- [x] `source_filename` sanitized (basename only; path segments rejected)
+- [x] DB created via SQLAlchemy `create_all`; default SQLite works locally
+- [x] OpenAPI/curl smoke of full CRUD succeeds
 - [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
 
 ### Summary
 
-_(fill on finish)_
+Add SQLAlchemy Order + ActivityLog models, Pydantic validation, and full `/api/v1/orders` CRUD with activity logging and basename-only filename sanitization. Seeds Buffy Summers for local smoke.
 
 ### Test plan
 
-- [ ] Create/read/update/delete Order via API docs or curl
-- [ ] Confirm activity rows in DB after mutations
-- [ ] Reject invalid DOB / missing required fields
+- [x] Create/read/update/delete Order via curl
+- [x] Confirm activity rows in DB after list/get/create/update/delete
+- [x] Reject path-style `source_filename` and missing required fields (422)
 
 ### Notes / risks
 
-_(fill on finish)_
+- Activity logging on every list/get may be noisy; acceptable for assessment demo.
+- Engine binds at import from `DATABASE_URL`; restart process after env changes.
+- `GET /api/v1/activity` deferred (S2).
 
 ---
 
