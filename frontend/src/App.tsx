@@ -212,7 +212,7 @@ function App() {
         <input
           type="password"
           autoComplete="off"
-          placeholder="Paste from README when API_KEY is set on the server"
+          placeholder="demo-reviewer-key"
           value={apiKeyInput}
           onChange={(e) => {
             const value = e.target.value
@@ -222,8 +222,9 @@ function App() {
         />
       </label>
       <p className="muted api-key-hint">
-        Stored in sessionStorage only (not baked into the Vite build). Leave
-        blank for local APIs with no <code>API_KEY</code>.
+        Same value as server <code>API_KEY</code> (README). Stored in
+        sessionStorage only — not in the Vite build. Leave blank if the API
+        has no key configured.
       </p>
 
       {error && (
