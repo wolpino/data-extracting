@@ -8,6 +8,7 @@ from data_extracting_backend.auth import require_api_key
 from data_extracting_backend.config import Settings, get_settings
 from data_extracting_backend.db import get_db
 from data_extracting_backend.extract import ExtractDraft, extract_patient_draft
+from data_extracting_backend.rate_limit import enforce_extract_rate_limit
 
 router = APIRouter(tags=["extract"])
 
@@ -16,7 +17,8 @@ router = APIRouter(tags=["extract"])
     "/extract",
     response_model=ExtractDraft,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(require_api_key)],
+    # API key (when configured) + cheap Gemini-quota guard before upload/LLM.
+    dependencies=[Depends(require_api_key), Depends(enforce_extract_rate_limit)],
 )
 async def extract_document(
     request: Request,

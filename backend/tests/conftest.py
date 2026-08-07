@@ -27,10 +27,15 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Generator[TestCli
 
     # Import after env + engine bind so lifespan uses the temp DB.
     from data_extracting_backend.main import app
+    from data_extracting_backend.rate_limit import extract_limiter
+
+    # Shared in-process buckets must not bleed across tests (same TestClient IP).
+    extract_limiter.reset()
 
     with TestClient(app) as test_client:
         yield test_client
 
+    extract_limiter.reset()
     get_settings.cache_clear()
 
 
