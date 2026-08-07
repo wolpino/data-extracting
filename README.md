@@ -6,12 +6,14 @@ GenHealth take-home MVP: upload a patient PDF → Gemini draft (first/last/DOB) 
 
 ## Public URLs
 
-| Surface | URL |
-|---------|-----|
-| UI | https://data-extracting-ui.onrender.com |
-| API | https://data-extracting-api.onrender.com |
-| API health | https://data-extracting-api.onrender.com/health |
-| OpenAPI | https://data-extracting-api.onrender.com/docs |
+
+| Surface    | URL                                                                                                |
+| ---------- | -------------------------------------------------------------------------------------------------- |
+| UI         | [https://data-extracting-ui.onrender.com](https://data-extracting-ui.onrender.com)                 |
+| API        | [https://data-extracting-api.onrender.com](https://data-extracting-api.onrender.com)               |
+| API health | [https://data-extracting-api.onrender.com/health](https://data-extracting-api.onrender.com/health) |
+| OpenAPI    | [https://data-extracting-api.onrender.com/docs](https://data-extracting-api.onrender.com/docs)     |
+
 
 Secrets (`GEMINI_API_KEY`, etc.) live only in Render env / local `backend/.env` — never in git.
 
@@ -25,6 +27,8 @@ Secrets (`GEMINI_API_KEY`, etc.) live only in Render env / local `backend/.env` 
 - **SQLite on Render free tier** is ephemeral across deploys (Orders may reset after redeploy).
 - Decisions and tradeoffs: [docs/DECISIONS.md](docs/DECISIONS.md). Post-MVP sequence: [docs/ROADMAP.md](docs/ROADMAP.md).
 
+
+
 ### Manual demo checklist
 
 - [ ] `GET https://data-extracting-api.onrender.com/health` returns ok
@@ -33,6 +37,8 @@ Secrets (`GEMINI_API_KEY`, etc.) live only in Render env / local `backend/.env` 
 - [ ] Edit draft → Confirm → new Order appears in the list
 - [ ] Manual create / edit / delete each requires Confirm
 - [ ] Optional: try a second Buffy PDF (`willow-…`, `xander-…`, `spike-…`)
+
+
 
 ## Architecture
 
@@ -43,14 +49,16 @@ Browser (Vite React TS)
                               └─ SQLAlchemy + SQLite (DATABASE_URL)
 ```
 
-| Piece | Choice |
-|-------|--------|
-| Backend | Python 3.12, FastAPI, uv (`uv.lock` + `uv sync` on Render) |
-| Frontend | Vite + React + TypeScript |
-| LLM | Gemini (`GEMINI_MODEL`, default `gemini-3.6-flash`), key server-side only |
-| DB | SQLite via SQLAlchemy; `DATABASE_URL` swap-ready for Postgres |
-| Deploy | Render Web Service (`backend/`) + Static Site (`frontend/dist`) |
-| Auth | Shared demo `API_KEY` on writes + `/extract` (`X-API-Key`); GETs open |
+
+| Piece    | Choice                                                                    |
+| -------- | ------------------------------------------------------------------------- |
+| Backend  | Python 3.12, FastAPI, uv (`uv.lock` + `uv sync` on Render)                |
+| Frontend | Vite + React + TypeScript                                                 |
+| LLM      | Gemini (`GEMINI_MODEL`, default `gemini-3.6-flash`), key server-side only |
+| DB       | SQLite via SQLAlchemy; `DATABASE_URL` swap-ready for Postgres             |
+| Deploy   | Render Web Service (`backend/`) + Static Site (`frontend/dist`)           |
+| Auth     | Shared demo `API_KEY` on writes + `/extract` (`X-API-Key`); GETs open     |
+
 
 Confirm-before-save: `POST /api/v1/extract` returns a **draft only**; Orders persist only via `POST /api/v1/orders/confirm` (or manual CRUD with UI confirm dialogs).
 
@@ -69,6 +77,8 @@ cp frontend/.env.example frontend/.env   # VITE_API_BASE_URL=http://localhost:80
 cd frontend && npm install && npm run dev
 ```
 
+
+
 ### Smoke scripts
 
 ```bash
@@ -77,6 +87,8 @@ cd frontend && npm install && npm run dev
 # against prod:
 BASE=https://data-extracting-api.onrender.com ./backend/scripts/smoke_orders.sh
 ```
+
+
 
 ### Automated tests
 
@@ -94,17 +106,17 @@ More curl notes: [backend/README.md](backend/README.md).
 
 ## Deploy (Render)
 
-Blueprint: [render.yaml](render.yaml) (Web Service + Static Site). Deploy from branch **`main`**.
+Blueprint: [render.yaml](render.yaml) (Web Service + Static Site). Deploy from branch `main`.
 
-1. **API** — root `backend/` (must include `uv.lock`)  
-   - Build: `uv sync --frozen`  
-   - Start: `uv run uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT`  
-   - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS=https://data-extracting-ui.onrender.com`, optional `MAX_UPLOAD_BYTES`, **`API_KEY`** (shared demo key — match README), optional extract rate-limit vars
-2. **UI** — root `frontend/`  
-   - Build: `npm ci && npm run build`  
-   - Publish: `dist`  
-   - Env (build-time): `VITE_API_BASE_URL=https://data-extracting-api.onrender.com`  
-   - Do **not** set the demo key as `VITE_*` — reviewers paste it in the UI (sessionStorage).
+1. **API** — root `backend/` (must include `uv.lock`)
+  - Build: `uv sync --frozen`  
+  - Start: `uv run uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT`  
+  - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS=https://data-extracting-ui.onrender.com`, optional `MAX_UPLOAD_BYTES`, `API_KEY` (shared demo key — match README), optional extract rate-limit vars
+2. **UI** — root `frontend/`
+  - Build: `npm ci && npm run build`  
+  - Publish: `dist`  
+  - Env (build-time): `VITE_API_BASE_URL=https://data-extracting-api.onrender.com`  
+  - Do **not** set the demo key as `VITE_*` — reviewers paste it in the UI (sessionStorage).
 
 Free-tier note: SQLite lives on the instance filesystem and is **ephemeral across deploys** unless you attach a disk or move to Postgres.
 
@@ -116,12 +128,16 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 - `POST /api/v1/extract` is rate-limited in-process (`EXTRACT_RATE_LIMIT_PER_MINUTE`, default 15/min per client IP). Over-limit returns **429** + `Retry-After`. Limit is **per Render instance** (not shared across multiple instances on free tier).
 - Confirm UI uses a modal dialog (confirm-before-save intact).
 
+
+
 ## Known issues
 
 - Gemini free-tier quota can 429; override model with `GEMINI_MODEL` or raise billing limits.
 - Activity log has no actor/user name yet (no auth in MVP) — see [docs/DECISIONS.md](docs/DECISIONS.md).
 - **DOB date picker** allows selecting dates after today — should set `max` to the current day (and ideally validate server-side). Known bug; fix in a small follow-up.
 - **Delete confirm layout:** Confirm delete currently shifts left when Delete is replaced. Preferred: Confirm delete stays on the right (Delete’s place); Cancel stacks under Edit. Cancel-under-Edit may be easy to mis-click; fuller rationale unknown beyond UI testing preference. Track for small UI follow-up.
+
+
 
 ## With more time / short roadmap
 

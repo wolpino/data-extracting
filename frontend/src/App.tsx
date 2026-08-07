@@ -201,7 +201,7 @@ function App() {
 
   return (
     <main className="app">
-      <h1>Orders</h1>
+      <h1>The Extractor</h1>
       <p className="muted">
         API: <code>{apiBaseUrl}</code> — review extracted fields, then{' '}
         <strong>Confirm &amp; save</strong> (or create/save manually).
