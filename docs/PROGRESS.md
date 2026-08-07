@@ -4,18 +4,18 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR2b — Code comments + agent mandate
-- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/4 — **do not start PR3 until PR2b approved**
+- **Phase:** PR3 — Thin UI + CORS
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/5 — **do not start PR4 until approved**
 
 ## Done
 
-- [x] PR0 / PR1 / PR2 merged
-- [x] Commenting standard + catch-up comments on existing code
+- [x] PR0–PR2b merged
+- [x] CORS allowlist + Orders UI with confirm-before-save
 
 ## Next
 
-- Human reviews PR2b
-- On go-ahead: PR3 thin UI + CORS (with comments on new code)
+- Human reviews PR3
+- On go-ahead: PR4 Gemini extract + confirm
 
 ## Blockers
 

@@ -1,27 +1,80 @@
 .app {
-  max-width: 40rem;
+  max-width: 52rem;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0 1rem 3rem;
   font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .muted {
   color: #555;
 }
 
-.label {
-  font-weight: 600;
+.error {
+  color: #a11818;
+  background: #fdecec;
+  padding: 0.6rem 0.8rem;
+}
+
+.confirm {
+  border: 1px solid #b45309;
+  background: #fff7ed;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 24rem;
+}
+
+label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.95rem;
+}
+
+input {
+  padding: 0.4rem 0.5rem;
+  font: inherit;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+button {
+  font: inherit;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #f3f4f6;
+}
+
+button.danger {
+  color: #a11818;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
 }
 
 code {
   font-size: 0.9em;
-}
-
-.ok {
-  color: #0a7a32;
-}
-
-.error {
-  color: #a11818;
 }

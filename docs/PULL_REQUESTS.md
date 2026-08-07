@@ -25,8 +25,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR0](#pr0--spec-decisions-agent-process) | Spec, decisions, agent process | `merged` |
 | [PR1](#pr1--scaffold) | Backend + frontend scaffold | `merged` |
 | [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `merged` |
-| [PR2b](#pr2b--code-comments--agent-mandate) | Code comments + agent mandate | `ready_for_review` |
-| [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `planned` |
+| [PR2b](#pr2b--code-comments--agent-mandate) | Code comments + agent mandate | `merged` |
+| [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `ready_for_review` |
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `planned` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `planned` |
 
@@ -180,11 +180,12 @@ Add SQLAlchemy Order + ActivityLog models, Pydantic validation, and full `/api/v
 
 ## PR2b — Code comments + agent mandate
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `docs/pr2b-code-comments`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/4
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR2 merged
 
 ### Scope
@@ -221,9 +222,11 @@ Catch up concise comments on the current codebase and lock an agent mandate so l
 
 ## PR3 — Thin UI + CORS
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review`
+- **Branch:** `feature/pr3-ui-cors`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/5
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR2b merged/approved
 
 ### Scope
@@ -235,27 +238,30 @@ Catch up concise comments on the current codebase and lock an agent mandate so l
 
 ### Acceptance criteria
 
-- [ ] Browser UI lists Orders from API
-- [ ] Create and edit require explicit Confirm before calling API
-- [ ] Delete requires confirm dialog
-- [ ] CORS allows configured Vite origin; disallowed origins fail as expected
-- [ ] `CORS_ORIGINS` documented in `.env.example`
-- [ ] UI remains thin (no design-system chase)
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+- [x] Browser UI lists Orders from API
+- [x] Create and edit require explicit Confirm before calling API
+- [x] Delete requires confirm dialog
+- [x] CORS allows configured Vite origin; disallowed origins fail as expected
+- [x] `CORS_ORIGINS` documented in `.env.example`
+- [x] UI remains thin (no design-system chase)
+- [x] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
 
 ### Summary
 
-_(fill on finish)_
+Add CORS allowlist middleware and a thin Orders UI where create/update/delete only hit the API after an explicit Confirm step.
 
 ### Test plan
 
-- [ ] Local UI ↔ local API CRUD with confirms
-- [ ] Attempt save without confirm is impossible in UI
-- [ ] CORS smoke from frontend origin
+- [x] `npm run build` succeeds
+- [x] CORS: `Origin: http://localhost:5173` gets `access-control-allow-origin`; evil origin does not
+- [x] `./backend/scripts/smoke_orders.sh` still passes
+- [ ] Manual: `npm run dev` + API on :8000 — create/edit/delete with Confirm (reviewer)
 
 ### Notes / risks
 
-_(fill on finish)_
+- Confirm UI is an in-page dialog (not `window.confirm`) so Cancel is obvious.
+- Upload/extract UI intentionally deferred to PR4.
+- CORS origins are read at process start; restart API after changing `CORS_ORIGINS`.
 
 ---
 
