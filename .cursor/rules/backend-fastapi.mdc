@@ -1,0 +1,19 @@
+---
+description: FastAPI backend conventions for this assessment
+globs: backend/**/*
+alwaysApply: false
+---
+
+# Backend
+
+- Package/tooling via **uv**; app via **FastAPI**; ORM via **SQLAlchemy**; default DB **SQLite** through `DATABASE_URL`.
+- Mount routes under `/api/v1`. Pydantic for request/response validation.
+- Order model stays minimal (SPEC A). No auth middleware in MVP.
+- Activity log writes in the service layer for demo routes.
+- Extract: module/function `bytes + content_type → draft`; PDF-only branch; reject non-PDF with 400/415; **do not** insert Order on extract.
+- Enforce upload **size limit**; sanitize `source_filename` (basename only, no paths).
+- Confirm endpoint creates Order from draft fields (+ optional filename).
+- Gemini client server-side only; never commit API keys. Use `.env` / Render env.
+- CORS from allowlist env (not `*` in production). Do not log PDF bytes or leak secrets in errors.
+- Prefer `create_all` for MVP schema; document Alembic as later.
+- Official refs: https://docs.astral.sh/uv/ https://fastapi.tiangolo.com/ https://ai.google.dev/gemini-api/docs/quickstart
