@@ -8,12 +8,30 @@ GenHealth take-home MVP: upload a patient PDF → Gemini draft (first/last/DOB) 
 
 | Surface | URL |
 |---------|-----|
-| UI | _pending Render Static Site_ |
-| API | _pending Render Web Service_ |
-| API health | `{API}/health` |
-| OpenAPI | `{API}/docs` |
+| UI | https://data-extracting-ui.onrender.com |
+| API | https://data-extracting-api.onrender.com |
+| API health | https://data-extracting-api.onrender.com/health |
+| OpenAPI | https://data-extracting-api.onrender.com/docs |
 
 Secrets (`GEMINI_API_KEY`, etc.) live only in Render env / local `backend/.env` — never in git.
+
+## For reviewers
+
+- **Happy path:** open the [UI](https://data-extracting-ui.onrender.com) → upload a PDF from [docs/testdata/](docs/testdata/) → edit the draft fields if needed → **Confirm** to save → list/edit/delete Orders (each mutation asks for Confirm).
+- **Confirm-before-save:** `POST /extract` returns a draft only; Orders persist only after confirm (API + UI).
+- **Fake data only:** Buffy-themed names/fixtures — not real PHI. Expected fields for the small charts are listed in [docs/testdata/README.md](docs/testdata/README.md).
+- **Unauthenticated public API:** anyone with the URL can read/write and call `/extract` (Gemini cost/quota risk). Accepted for this take-home; harden before real PHI.
+- **SQLite on Render free tier** is ephemeral across deploys (Orders may reset after redeploy).
+- Decisions and tradeoffs: [docs/DECISIONS.md](docs/DECISIONS.md). Post-MVP sequence: [docs/ROADMAP.md](docs/ROADMAP.md).
+
+### Manual demo checklist
+
+- [ ] `GET https://data-extracting-api.onrender.com/health` returns ok
+- [ ] UI loads Orders from the deployed API (CORS OK)
+- [ ] Upload `docs/testdata/buffy-summers-chart.pdf` (or the CPAP sample) → draft shows first/last/DOB
+- [ ] Edit draft → Confirm → new Order appears in the list
+- [ ] Manual create / edit / delete each requires Confirm
+- [ ] Optional: try a second Buffy PDF (`willow-…`, `xander-…`, `spike-…`)
 
 ## Architecture
 
@@ -55,25 +73,26 @@ cd frontend && npm install && npm run dev
 ```bash
 ./backend/scripts/smoke_orders.sh
 ./backend/scripts/smoke_extract.sh   # needs GEMINI_API_KEY in backend/.env
+# against prod:
+BASE=https://data-extracting-api.onrender.com ./backend/scripts/smoke_orders.sh
 ```
 
-Sample PDF: [docs/testdata/DME Patient Demo Document CPAP.fax.pdf](docs/testdata/DME%20Patient%20Demo%20Document%20CPAP.fax.pdf).
+Testdata: [docs/testdata/](docs/testdata/) (Buffy charts + assessment CPAP sample).
 
 More curl notes: [backend/README.md](backend/README.md).
 
 ## Deploy (Render)
 
-Blueprint: [render.yaml](render.yaml) (Web Service + Static Site).
+Blueprint: [render.yaml](render.yaml) (Web Service + Static Site). Deploy from branch **`main`**.
 
-1. **API** — New → Blueprint (or Web Service), root `backend/` (must include `uv.lock`)  
+1. **API** — root `backend/` (must include `uv.lock`)  
    - Build: `uv sync --frozen`  
    - Start: `uv run uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT`  
-   - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS` (include the static site `https://…onrender.com`), optional `MAX_UPLOAD_BYTES`
-2. **UI** — Static Site, root `frontend/`  
+   - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS=https://data-extracting-ui.onrender.com`, optional `MAX_UPLOAD_BYTES`
+2. **UI** — root `frontend/`  
    - Build: `npm ci && npm run build`  
    - Publish: `dist`  
-   - Env (build-time): `VITE_API_BASE_URL=https://<api-service>.onrender.com`
-3. After both URLs exist, set `CORS_ORIGINS` on the API to the UI origin and redeploy/restart if needed.
+   - Env (build-time): `VITE_API_BASE_URL=https://data-extracting-api.onrender.com`
 
 Free-tier note: SQLite lives on the instance filesystem and is **ephemeral across deploys** unless you attach a disk or move to Postgres.
 
@@ -82,17 +101,18 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 - **Unauthenticated public API** — anyone with the URL can read/write Orders and call `/extract` (Gemini cost/quota risk). Accepted for this take-home; gate with auth/API key before real PHI.
 - SQLite on Render free tier is not durable across deploys.
 - PDF-only uploads; no malware scanning.
-- No rate limiting on `/extract` yet (S3 / with-more-time).
-- Confirm UI uses a top-of-page banner (works; not polished).
+- No rate limiting on `/extract` yet (planned PR9).
+- Confirm UI uses a top-of-page banner (works; functionality fix planned PR7).
+- Activity is logged to the DB but not yet shown in the UI (planned PR7).
 
 ## Known issues
 
-- Confirm banner UX is clunky (placement/focus) — improve with a modal near the action after deploy. See DECISIONS.
+- Confirm banner UX is clunky (placement/focus) — replace with near-action confirm in PR7. See DECISIONS / ROADMAP.
 - Gemini free-tier quota can 429; override model with `GEMINI_MODEL` or raise billing limits.
 
 ## With more time / short roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md): Spec B Order fields, Postgres, auth/API key, rate limits, multi-MIME extract, Alembic, confirm UX polish.
+See [docs/ROADMAP.md](docs/ROADMAP.md): UI functionality → written tests → hardening → Postgres, then Spec B / multi-MIME / etc.
 
 ## Agent / process
 

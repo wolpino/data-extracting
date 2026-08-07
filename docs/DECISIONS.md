@@ -14,6 +14,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Post-MVP: docs (PR6) before UI; tests before harden
+
+- **Decision:** PR6 = reviewer docs + Buffy PDF fixtures + manual checklist; PR7 = UI functionality; PR8 = written tests; PR9 = API key + extract rate limit; PR10 = Postgres/Alembic.
+- **Reasoning:** Explain the live demo first; fix confirm/activity usability next; land automated tests before security changes so regressions are caught.
+- **Alternatives considered:** Bundle written tests into hardening; skip extra Buffy PDFs; UI polish before docs.
+- **Revisit when:** Human reprioritizes durability (Postgres) ahead of harden.
+
 ### 2026-08-07 — Render deploy via Blueprint + uv sync
 
 - **Decision:** Ship `render.yaml` (API web service + static UI) using Render’s native uv support: rootDir `backend/` (with `uv.lock`), build `uv sync --frozen`, start `uv run uvicorn …`.

@@ -4,27 +4,27 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR5 — Deploy + README
-- **Status:** `in_progress` — https://github.com/wolpino/data-extracting/pull/7
-- **Branch:** `deploy/pr5-render-readme`
+- **Phase:** PR6 — Docs + Buffy testdata + manual checklist
+- **Status:** `ready_for_review` — branch `docs/pr6-reviewer-readme-roadmap`
+- **GitHub:** _(set when opened)_
 
 ## Done
 
-- [x] PR0–PR4 merged (PR4: https://github.com/wolpino/data-extracting/pull/6)
+- [x] PR0–PR5 merged (PR5: https://github.com/wolpino/data-extracting/pull/7)
+- [x] Public deploy: https://data-extracting-api.onrender.com · https://data-extracting-ui.onrender.com
 - [x] Extract + confirm API/UI; model `gemini-3.6-flash`
-- [x] Confirm UX debt logged for later
-- [x] PR5 artifacts: `render.yaml`, `backend/requirements.txt`, README + ROADMAP; GitHub PR opened
+- [x] Confirm UX debt logged (PR7)
 
 ## Next
 
-- Human: sign in to Render (dashboard is at login) so API + Static Site can be created
-- Set env (`GEMINI_API_KEY`, `CORS_ORIGINS`, `VITE_API_BASE_URL`); smoke prod; fill public URLs in README
-- Mark PR5 `ready_for_review`; pause
+- Human reviews PR6
+- On go-ahead: PR7 UI functionality (not polish)
 
 ## Blockers
 
-- Render dashboard requires interactive login (agent cannot complete OAuth/password)
+- None
 
 ## Known issues
 
-- Confirm banner at top of page is not user-friendly — defer UX improvement (modal near action). See DECISIONS.
+- Confirm banner at top of page is not user-friendly — PR7 near-action confirm. See DECISIONS / ROADMAP.
+- Activity logged but not shown in UI — PR7.

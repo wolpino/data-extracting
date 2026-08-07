@@ -28,7 +28,12 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR2b](#pr2b--code-comments--agent-mandate) | Code comments + agent mandate | `merged` |
 | [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `merged` |
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `merged` |
-| [PR5](#pr5--deploy--readme) | Deploy + README | `in_progress` |
+| [PR5](#pr5--deploy--readme) | Deploy + README | `merged` |
+| [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `ready_for_review` |
+| [PR7](#pr7--ui-functionality) | UI functionality (not polish) | `planned` |
+| [PR8](#pr8--written-automated-tests) | Written automated tests | `planned` |
+| [PR9](#pr9--hardening) | API key + extract rate limit | `planned` |
+| [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
 
 ---
 
@@ -319,10 +324,12 @@ Add Gemini PDF extract (draft-only) and `/orders/confirm`, wire thin UI upload �
 
 ## PR5 — Deploy + README
 
-- **Status:** `in_progress`
+- **Status:** `merged`
 - **Branch:** `deploy/pr5-render-readme`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/7
 - **Started:** 2026-08-07
+- **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR4 merged/approved (or minimal API+extract path live)
 
 ### Scope
@@ -334,13 +341,96 @@ Add Gemini PDF extract (draft-only) and `/orders/confirm`, wire thin UI upload �
 
 ### Acceptance criteria
 
-- [ ] Public API health endpoint reachable
-- [ ] Public `POST /api/v1/extract` works with a PDF (reviewer-usable)
-- [ ] Confirm + Order CRUD work against deployed API
-- [ ] Deployed UI talks to deployed API (CORS + `VITE_API_BASE_URL` correct)
-- [ ] Secrets set in Render only; not in git
-- [ ] README covers architecture, decisions, limitations (incl. unauthenticated API risk), Known issues, with-more-time / roadmap
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review / submission packaging
+- [x] Public API health endpoint reachable
+- [x] Public `POST /api/v1/extract` works with a PDF (reviewer-usable)
+- [x] Confirm + Order CRUD work against deployed API
+- [x] Deployed UI talks to deployed API (CORS + `VITE_API_BASE_URL` correct)
+- [x] Secrets set in Render only; not in git
+- [x] README covers architecture, decisions, limitations (incl. unauthenticated API risk), Known issues, with-more-time / roadmap
+- [x] Living PR log + PROGRESS updated; GitHub PR opened; pause for review / submission packaging
+
+### Summary
+
+Deploy FastAPI + Vite static site on Render (`uv sync` build), ship Blueprint/`render.yaml`, and document architecture and limitations for reviewers.
+
+### Test plan
+
+- [x] Hit public health URL (`https://data-extracting-api.onrender.com/health`)
+- [x] Upload + extract + confirm on production (CORS allow-origin verified)
+- [x] UI list path on production
+- [ ] Confirm README lists public URLs (completed in PR6)
+
+### Notes / risks
+
+- Live: API https://data-extracting-api.onrender.com · UI https://data-extracting-ui.onrender.com
+- SQLite on free tier is ephemeral across deploys.
+- Point Render services at branch `main` after merge.
+- Unauthenticated public write + `/extract` is an accepted take-home risk.
+
+---
+
+## PR6 — Docs, testdata + manual checklist
+
+- **Status:** `ready_for_review`
+- **Branch:** `docs/pr6-reviewer-readme-roadmap`
+- **GitHub:** _(set when opened)_
+- **Started:** 2026-08-07
+- **Depends on:** PR5 merged + public URLs known
+
+### Scope
+
+- Fill README public URLs + **For reviewers** + manual demo checklist
+- Expand `docs/ROADMAP.md` (PR7–PR10 sequence, testing track)
+- Close PR5 in living log; plan PR6–PR10
+- Buffy-themed PDF fixtures under `docs/testdata/` + expected name/DOB table
+- No application feature code
+
+### Acceptance criteria
+
+- [x] README lists live UI/API/health/docs URLs
+- [x] For reviewers + manual checklist present
+- [x] Buffy PDF fixtures + `docs/testdata/README.md` with expected fields
+- [x] ROADMAP documents PR7 UI → PR8 tests → PR9 harden → PR10 Postgres
+- [x] PR5 marked `merged`; PR6 opened for review; pause
+
+### Summary
+
+_(fill on open)_
+
+### Test plan
+
+- [ ] Spot-check README links open
+- [ ] Open a Buffy PDF; confirm expected name/DOB table matches file text
+- [ ] ROADMAP PR sequence matches living PULL_REQUESTS index
+
+### Notes / risks
+
+- Docs-only; does not change deploy behavior.
+- Small PDFs are synthetic text charts (not fax-quality); CPAP sample remains the large assessment fixture.
+
+---
+
+## PR7 — UI functionality
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR6 merged/approved
+
+### Scope
+
+- Near-action confirm (replace top banner)
+- Clear draft vs manual-create CTAs
+- `GET /api/v1/activity` + thin Recent activity panel
+- Extract busy/error feedback (415/429/502)
+
+### Acceptance criteria
+
+- [ ] Confirm dialog appears near the initiating action; Cancel/Confirm work
+- [ ] After PDF extract, draft state is obvious; primary CTA saves Order only after confirm
+- [ ] Activity list visible in UI (metadata only; no PDF bytes)
+- [ ] Extract shows clear progress/error states
+- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause
 
 ### Summary
 
@@ -348,11 +438,113 @@ _(fill on finish)_
 
 ### Test plan
 
-- [ ] Hit public health URL
-- [ ] Upload + extract + confirm on production
-- [ ] UI list/create path on production
-- [ ] Confirm README lists public URLs
+- [ ] Manual: upload Buffy PDF → edit → confirm via new UI
+- [ ] Manual: create/edit/delete confirms
+- [ ] Manual: activity rows appear after actions
+- [ ] `npm run build`
 
 ### Notes / risks
 
-_(fill on finish; call out SQLite ephemeral disk on free tier if applicable)_
+- Not visual polish / design system.
+- Confirm-before-save invariant must remain.
+
+---
+
+## PR8 — Written automated tests
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR7 merged/approved (or activity endpoint available)
+
+### Scope
+
+- Schema/unit tests for Order + extract draft validation
+- FastAPI TestClient: CRUD, non-PDF 415, extract does not persist, confirm persists
+- Mock Gemini by default; optional live-key integration marked local-only
+- Use `docs/testdata/` fixtures where useful
+
+### Acceptance criteria
+
+- [ ] `pytest` (or equivalent) suite runs locally via uv
+- [ ] Extract non-persist + confirm persist covered
+- [ ] Filename sanitize / validation covered
+- [ ] Living PR log updated; pause
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Run full suite green without `GEMINI_API_KEY`
+- [ ] Optional: one live extract with key
+
+### Notes / risks
+
+- Do not call real Gemini in default CI.
+
+---
+
+## PR9 — Hardening
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR8 merged/approved
+
+### Scope
+
+- Shared API key (or equivalent) on write + `/extract`
+- Rate limit `/extract`
+- Document client header / UI wiring
+
+### Acceptance criteria
+
+- [ ] Unauthenticated writes rejected when key configured
+- [ ] Extract rate-limited with clear errors
+- [ ] README updated; living log; pause
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Tests from PR8 updated for auth/rate-limit behavior
+- [ ] Manual prod check with key
+
+### Notes / risks
+
+- Keep demo usable for reviewers (document how to pass the key).
+
+---
+
+## PR10 — Postgres + Alembic
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR9 merged/approved (or human prioritizes durability earlier)
+
+### Scope
+
+- Render Postgres; `DATABASE_URL` swap
+- Alembic migrations replacing reliance on `create_all` for prod
+
+### Acceptance criteria
+
+- [ ] Deployed API uses Postgres; data survives redeploy
+- [ ] Migrations documented; living log; pause
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] CRUD + extract/confirm against Postgres locally and on Render
+
+### Notes / risks
+
+- Free-tier Postgres limits; backup story still light.
