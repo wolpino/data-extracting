@@ -102,17 +102,17 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 - SQLite on Render free tier is not durable across deploys.
 - PDF-only uploads; no malware scanning.
 - No rate limiting on `/extract` yet (planned PR9).
-- Confirm UI uses a top-of-page banner (works; functionality fix planned PR7).
-- Activity is logged to the DB but not yet shown in the UI (planned PR7).
+- Confirm UI uses a top-of-page banner (works; functionality fix planned PR8).
+- Activity is logged to the DB but not yet shown in the UI (planned PR8).
 
 ## Known issues
 
-- Confirm banner UX is clunky (placement/focus) — replace with near-action confirm in PR7. See DECISIONS / ROADMAP.
+- Confirm banner UX is clunky (placement/focus) — replace with near-action confirm in PR8. See DECISIONS / ROADMAP.
 - Gemini free-tier quota can 429; override model with `GEMINI_MODEL` or raise billing limits.
 
 ## With more time / short roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md): UI functionality → written tests → hardening → Postgres, then Spec B / multi-MIME / etc.
+See [docs/ROADMAP.md](docs/ROADMAP.md): written tests → UI functionality → hardening → Postgres, then Spec B / multi-MIME / etc.
 
 ## Agent / process
 

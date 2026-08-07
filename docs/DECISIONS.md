@@ -14,12 +14,19 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Post-MVP: written tests (PR7) before UI (PR8)
+
+- **Decision:** After PR6 docs, sequence is PR7 written tests → PR8 UI functionality → PR9 harden → PR10 Postgres.
+- **Reasoning:** Existing API surface can be covered without UI work (SPEC S2); gives a regression net before confirm/activity UI changes. Activity endpoint tests ship with PR8.
+- **Alternatives considered:** UI before tests (earlier ROADMAP); bundle tests into hardening only.
+- **Revisit when:** Human wants durability (Postgres) earlier.
+
 ### 2026-08-07 — Post-MVP: docs (PR6) before UI; tests before harden
 
 - **Decision:** PR6 = reviewer docs + Buffy PDF fixtures + manual checklist; PR7 = UI functionality; PR8 = written tests; PR9 = API key + extract rate limit; PR10 = Postgres/Alembic.
 - **Reasoning:** Explain the live demo first; fix confirm/activity usability next; land automated tests before security changes so regressions are caught.
 - **Alternatives considered:** Bundle written tests into hardening; skip extra Buffy PDFs; UI polish before docs.
-- **Revisit when:** Human reprioritizes durability (Postgres) ahead of harden.
+- **Revisit when:** Human reprioritizes durability (Postgres) ahead of harden. **Superseded for PR7/PR8 order by “written tests before UI” entry above.**
 
 ### 2026-08-07 — Render deploy via Blueprint + uv sync
 

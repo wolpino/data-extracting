@@ -30,8 +30,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `merged` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `merged` |
 | [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `ready_for_review` |
-| [PR7](#pr7--ui-functionality) | UI functionality (not polish) | `planned` |
-| [PR8](#pr8--written-automated-tests) | Written automated tests | `planned` |
+| [PR7](#pr7--written-automated-tests) | Written automated tests | `planned` |
+| [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `planned` |
 | [PR9](#pr9--hardening) | API key + extract rate limit | `planned` |
 | [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
 
@@ -391,12 +391,13 @@ Deploy FastAPI + Vite static site on Render (`uv sync` build), ship Blueprint/`r
 - [x] README lists live UI/API/health/docs URLs
 - [x] For reviewers + manual checklist present
 - [x] Buffy PDF fixtures + `docs/testdata/README.md` with expected fields
-- [x] ROADMAP documents PR7 UI → PR8 tests → PR9 harden → PR10 Postgres
+- [x] ROADMAP documents PR7 tests → PR8 UI → PR9 harden → PR10 Postgres
 - [x] PR5 marked `merged`; PR6 opened for review; pause
 
 ### Summary
 
 Ship reviewer-facing README (live URLs + manual checklist), expand post-MVP ROADMAP/PR log through PR10, and add Buffy-themed PDF fixtures for extract practice.
+
 ### Test plan
 
 - [ ] Spot-check README links open
@@ -410,52 +411,12 @@ Ship reviewer-facing README (live URLs + manual checklist), expand post-MVP ROAD
 
 ---
 
-## PR7 — UI functionality
+## PR7 — Written automated tests
 
 - **Status:** `planned`
 - **Branch:** _(set on start)_
 - **GitHub:** _(set when opened)_
 - **Depends on:** PR6 merged/approved
-
-### Scope
-
-- Near-action confirm (replace top banner)
-- Clear draft vs manual-create CTAs
-- `GET /api/v1/activity` + thin Recent activity panel
-- Extract busy/error feedback (415/429/502)
-
-### Acceptance criteria
-
-- [ ] Confirm dialog appears near the initiating action; Cancel/Confirm work
-- [ ] After PDF extract, draft state is obvious; primary CTA saves Order only after confirm
-- [ ] Activity list visible in UI (metadata only; no PDF bytes)
-- [ ] Extract shows clear progress/error states
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause
-
-### Summary
-
-_(fill on finish)_
-
-### Test plan
-
-- [ ] Manual: upload Buffy PDF → edit → confirm via new UI
-- [ ] Manual: create/edit/delete confirms
-- [ ] Manual: activity rows appear after actions
-- [ ] `npm run build`
-
-### Notes / risks
-
-- Not visual polish / design system.
-- Confirm-before-save invariant must remain.
-
----
-
-## PR8 — Written automated tests
-
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
-- **Depends on:** PR7 merged/approved (or activity endpoint available)
 
 ### Scope
 
@@ -483,6 +444,49 @@ _(fill on finish)_
 ### Notes / risks
 
 - Do not call real Gemini in default CI.
+- Activity list endpoint tests land with PR8 when that API is added.
+
+---
+
+## PR8 — UI functionality
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR7 merged/approved
+
+### Scope
+
+- Near-action confirm (replace top banner)
+- Clear draft vs manual-create CTAs
+- `GET /api/v1/activity` + thin Recent activity panel
+- Extract busy/error feedback (415/429/502)
+- Extend automated tests for the new activity endpoint
+
+### Acceptance criteria
+
+- [ ] Confirm dialog appears near the initiating action; Cancel/Confirm work
+- [ ] After PDF extract, draft state is obvious; primary CTA saves Order only after confirm
+- [ ] Activity list visible in UI (metadata only; no PDF bytes)
+- [ ] Extract shows clear progress/error states
+- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Manual: upload Buffy PDF → edit → confirm via new UI
+- [ ] Manual: create/edit/delete confirms
+- [ ] Manual: activity rows appear after actions
+- [ ] Automated: activity list endpoint covered
+- [ ] `npm run build`
+
+### Notes / risks
+
+- Not visual polish / design system.
+- Confirm-before-save invariant must remain.
 
 ---
 
@@ -511,7 +515,7 @@ _(fill on finish)_
 
 ### Test plan
 
-- [ ] Tests from PR8 updated for auth/rate-limit behavior
+- [ ] Tests from PR7/PR8 updated for auth/rate-limit behavior
 - [ ] Manual prod check with key
 
 ### Notes / risks
