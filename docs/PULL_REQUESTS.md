@@ -130,7 +130,7 @@ Scaffold monorepo shells: uv-managed FastAPI backend with health routes and pyda
 
 - **Status:** `ready_for_review`
 - **Branch:** `feature/pr2-order-crud`
-- **GitHub:** _(filled after open)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/3
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
 - **Depends on:** PR1 merged/approved
@@ -153,7 +153,7 @@ Scaffold monorepo shells: uv-managed FastAPI backend with health routes and pyda
 - [x] `source_filename` sanitized (basename only; path segments rejected)
 - [x] DB created via SQLAlchemy `create_all`; default SQLite works locally
 - [x] OpenAPI/curl smoke of full CRUD succeeds
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+- [x] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
 
 ### Summary
 

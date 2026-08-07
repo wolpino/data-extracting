@@ -5,7 +5,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR2 — Order CRUD + activity log
-- **Status:** Opening GitHub PR — **do not start PR3 until approved**
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/3 — **do not start PR3 until approved**
 
 ## Done
 
