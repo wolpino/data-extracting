@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+// Must match the FastAPI origin; CORS allowlist is configured on the API (PR3).
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
 type HealthState =

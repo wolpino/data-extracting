@@ -70,6 +70,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 - **Alternatives considered:** Skip roadmap entirely; build roadmap doc before code.
 - **Revisit when:** Writing final README (PR5).
 
+### 2026-08-07 — Concise commenting mandate (PR2b)
+
+- **Decision:** Require clear, concise why/constraint comments on non-obvious code in every PR; catch up existing code in PR2b; document standard in `docs/COMMENTING.md`.
+- **Reasoning:** Speeds human review and keeps agents from shipping unexplained persistence/security boundaries.
+- **Alternatives considered:** Docs-only with no code comments; heavy docstrings on every function.
+- **Revisit when:** Never drop the mandate; tune style if comments get noisy.
+
 ### 2026-08-07 — Living PULL_REQUESTS log (mandatory)
 
 - **Decision:** Keep `docs/PULL_REQUESTS.md` living; agents must update on every PR start/finish. Skipping is a process failure.

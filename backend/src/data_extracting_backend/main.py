@@ -1,3 +1,5 @@
+"""FastAPI entrypoint: schema init, demo seed, /health + /api/v1 routes."""
+
 from contextlib import asynccontextmanager
 from datetime import date
 
@@ -11,7 +13,7 @@ from data_extracting_backend.models import Order
 
 
 def seed_demo_order() -> None:
-    """Idempotent Buffy-named demo row for local smoke tests."""
+    """Idempotent Buffy-named demo row for local smoke tests (fake data only)."""
     with SessionLocal() as db:
         existing = db.scalars(
             select(Order).where(
@@ -34,6 +36,7 @@ def seed_demo_order() -> None:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    # Create tables then seed once — safe to re-run on reload.
     init_db()
     seed_demo_order()
     yield

@@ -1,3 +1,5 @@
+"""ORM models. Order schema is SPEC A (minimal demographics); activity is audit metadata."""
+
 from datetime import date, datetime
 
 from sqlalchemy import Date, DateTime, Integer, String, Text, func
@@ -34,6 +36,7 @@ class ActivityLog(Base):
     entity_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     method: Mapped[str | None] = mapped_column(String(16), nullable=True)
     path: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Short text only (counts, put/patch) — never file contents.
     detail: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

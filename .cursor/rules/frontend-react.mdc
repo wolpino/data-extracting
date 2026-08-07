@@ -11,4 +11,5 @@ alwaysApply: false
 - Required flows: upload PDF → show/edit draft → **Confirm** to save; Order list; edit/delete with **confirm dialogs** (no silent saves).
 - Do not call Gemini from the browser. Do not store secrets in the frontend.
 - CORS is a backend concern; frontend must use the deployed API origin in production.
+- Comment non-obvious why/constraints per `docs/COMMENTING.md` (confirm-before-save, API base URL, CORS expectations).
 - Official ref: https://vitejs.dev/guide/

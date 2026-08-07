@@ -16,4 +16,5 @@ alwaysApply: false
 - Gemini client server-side only; never commit API keys. Use `.env` / Render env.
 - CORS from allowlist env (not `*` in production). Do not log PDF bytes or leak secrets in errors.
 - Prefer `create_all` for MVP schema; document Alembic as later.
+- Comment non-obvious why/constraints per `docs/COMMENTING.md` (SQLite/threading, activity metadata-only, confirm vs extract, filename sanitize).
 - Official refs: https://docs.astral.sh/uv/ https://fastapi.tiangolo.com/ https://ai.google.dev/gemini-api/docs/quickstart

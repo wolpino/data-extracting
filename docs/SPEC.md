@@ -20,6 +20,7 @@ Living product/engineering spec. Decisions with rationale live in [DECISIONS.md]
 - Test PDF: [testdata/DME Patient Demo Document CPAP.fax.pdf](./testdata/DME%20Patient%20Demo%20Document%20CPAP.fax.pdf).
 - Process: small commits; mid-size PRs with summary / test plan / notes-risk; pause at checkpoints; stuck >10 min on SHOULD → Known issues + next MUST.
 - **PR log mandate:** keep [PULL_REQUESTS.md](./PULL_REQUESTS.md) living — update on every PR start/finish (process failure if skipped).
+- **Commenting mandate:** clear, concise comments on non-obvious code per [COMMENTING.md](./COMMENTING.md); required in every PR going forward.
 - Prefer official docs: [uv](https://docs.astral.sh/uv/), [FastAPI](https://fastapi.tiangolo.com/), [Vite](https://vitejs.dev/guide/), [Render FastAPI](https://render.com/docs/deploy-fastapi), [Render static](https://render.com/docs/static-sites), [Gemini quickstart](https://ai.google.dev/gemini-api/docs/quickstart).
 
 ## MUST / SHOULD / CUT
@@ -124,11 +125,12 @@ See [DECISIONS.md](./DECISIONS.md). Summary:
 
 1. Scaffold  
 2. CRUD API  
-3. Thin UI + CORS  
-4. LLM extract  
-5. Confirm  
-6. Deploy  
-7. README  
+3. Code comments hygiene (one-time catch-up) + ongoing comment standard  
+4. Thin UI + CORS  
+5. LLM extract  
+6. Confirm  
+7. Deploy  
+8. README  
 
 ## PR cadence
 
@@ -137,6 +139,7 @@ See [DECISIONS.md](./DECISIONS.md). Summary:
 | PR0 | SPEC, DECISIONS, AGENTS, Cursor rules, PULL_REQUESTS, security baseline | After PR open (human review) |
 | PR1 | Backend + frontend scaffold, env examples | After PR open |
 | PR2 | Order CRUD + activity log | After PR open |
+| PR2b | Concise comments on existing code + commenting mandate for agents | After PR open |
 | PR3 | Thin UI + CORS | After PR open |
 | PR4 | Gemini extract + confirm flow (API + UI) | After PR open; mid-checkpoint if >~20 files |
 | PR5 | Render deploy + README | After PR open |

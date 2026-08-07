@@ -2,7 +2,7 @@ from pathlib import PurePosixPath, PureWindowsPath
 
 
 def sanitize_source_filename(value: str) -> str:
-    """Return a basename-only filename; reject path segments / traversal."""
+    """Basename only — reject path separators / traversal (MVP security baseline)."""
     raw = value.strip()
     if not raw:
         raise ValueError("source_filename must not be blank")

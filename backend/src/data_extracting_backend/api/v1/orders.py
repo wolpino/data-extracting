@@ -1,3 +1,5 @@
+"""Order CRUD. Each handler writes an activity row (assessment requirement)."""
+
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -13,6 +15,7 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 
 
 def _touch(order: Order) -> None:
+    # SQLite onupdate is unreliable for DateTime; set explicitly on writes.
     order.updated_at = datetime.now(timezone.utc)
 
 
@@ -42,7 +45,7 @@ def create_order(
         source_filename=payload.source_filename,
     )
     db.add(order)
-    db.flush()
+    db.flush()  # need order.id before activity log
     log_activity(
         db,
         action="create",
