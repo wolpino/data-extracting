@@ -5,7 +5,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR1 — Scaffold
-- **Status:** Opening GitHub PR on `scaffold/pr1` — pause for human review; **do not start PR2 until approved**
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/2 — pause for human review; **do not start PR2 until approved**
 
 ## Done
 

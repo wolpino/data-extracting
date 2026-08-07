@@ -83,7 +83,7 @@ Establish product/process source of truth before scaffolding so agents do not du
 
 - **Status:** `ready_for_review`
 - **Branch:** `scaffold/pr1`
-- **GitHub:** _(filled after open)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/2
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
 - **Depends on:** PR0 approved
@@ -104,7 +104,7 @@ Establish product/process source of truth before scaffolding so agents do not du
 - [x] Env-driven settings stub exists on backend; frontend can read `VITE_API_BASE_URL`
 - [x] `.gitignore` still excludes `.env`, venvs, `node_modules`, `dist`, `*.db`
 - [x] No Order CRUD, extract, or Gemini code yet
-- [ ] `docs/PULL_REQUESTS.md` + `docs/PROGRESS.md` updated; GitHub PR opened; pause for review
+- [x] `docs/PULL_REQUESTS.md` + `docs/PROGRESS.md` updated; GitHub PR opened; pause for review
 
 ### Summary
 
