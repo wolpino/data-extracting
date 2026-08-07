@@ -72,6 +72,7 @@ Full auth/RBAC as P0, real PHI program, malware scanning in MVP+, design-system 
 ## Small follow-ups (known bugs)
 
 - DOB `<input type="date">` should disallow dates after today (`max` attribute + API validation).
+- Delete confirm layout: keep **Confirm delete** on the right (Delete’s place); put **Cancel** under **Edit**. Note Cancel-under-Edit may be easy to mis-click; fuller rationale unknown beyond UI testing preference.
 
 Planning prompt: [prompts/post-pr5-planning-agent.md](./prompts/post-pr5-planning-agent.md).  
 **Next (after PR8):** hardening plan prompt — [prompts/plan-pr9-hardening.md](./prompts/plan-pr9-hardening.md) (plan only; get human approval before implementing PR9).

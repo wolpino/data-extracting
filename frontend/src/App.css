@@ -163,27 +163,6 @@ button.danger {
   font-size: 0.9rem;
 }
 
-/* Keep Confirm delete in the Delete button's column; Cancel stacks under Edit. */
-.order-actions {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-  align-items: flex-start;
-  justify-content: flex-end;
-}
-
-.order-actions-left,
-.order-actions-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  align-items: stretch;
-}
-
-.order-actions-right {
-  min-width: 7.5rem;
-}
-
 .activity-more {
   margin-top: 0.5rem;
   width: 100%;

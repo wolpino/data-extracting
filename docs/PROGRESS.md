@@ -26,4 +26,4 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 - None blocking demo path; Gemini quota 429s remain possible on free tier.
 - DOB date picker allows future dates — should block dates after today (`max=today` + validation). Track for small UI follow-up.
-- Delete confirm: Confirm stays right; Cancel under Edit (possible Edit/Cancel mis-click) — see DECISIONS.
+- Delete confirm: Confirm delete should stay on the right; Cancel under Edit (possible Edit/Cancel mis-click; rationale otherwise unknown). Track for small UI follow-up.
