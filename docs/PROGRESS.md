@@ -5,7 +5,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR0 — Spec / decisions / agent process / security baseline
-- **Status:** Opening GitHub PR — **do not start PR1 until human approves**
+- **Status:** PR open for review — https://github.com/wolpino/data-extracting/pull/1 — **do not start PR1 until human approves**
 
 ## Done
 

@@ -18,7 +18,7 @@ Statuses: `planned` | `in_progress` | `ready_for_review` | `merged` | `closed`
 
 - **Status:** `ready_for_review`
 - **Branch:** `docs/pr0-spec-process`
-- **GitHub:** _(filled after `gh pr create`)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/1
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
 
@@ -52,4 +52,4 @@ Establish product/process source of truth before scaffolding so agents do not du
 - [x] AGENTS + Cursor rules
 - [x] PULL_REQUESTS living log + mandate
 - [x] Security review folded into SPEC/DECISIONS
-- [ ] GitHub PR opened (update link above)
+- [x] GitHub PR opened
