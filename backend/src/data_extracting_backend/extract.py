@@ -34,8 +34,8 @@ _BAD_NAME_TOKENS = frozenset(
 )
 
 _INCOMPLETE_DETAIL = (
-    "Could not extract first name, last name, and date of birth from this PDF. "
-    "All three fields are required and must appear in the document — try a clearer chart."
+    "First name, last name, and date of birth were not found in this PDF. "
+    "All three fields are required and must appear in the document."
 )
 
 
