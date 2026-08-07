@@ -164,12 +164,15 @@ Add SQLAlchemy Order + ActivityLog models, Pydantic validation, and full `/api/v
 - [x] Create/read/update/delete Order via curl
 - [x] Confirm activity rows in DB after list/get/create/update/delete
 - [x] Reject path-style `source_filename` and missing required fields (422)
+- [ ] Reviewer: `./backend/scripts/smoke_orders.sh` (or see backend README cheatsheet)
 
 ### Notes / risks
 
 - Activity logging on every list/get may be noisy; acceptable for assessment demo.
 - Engine binds at import from `DATABASE_URL`; restart process after env changes.
 - `GET /api/v1/activity` deferred (S2).
+- Quick smoke: `./backend/scripts/smoke_orders.sh`
+- Post-PR5 planning prompt added: `docs/prompts/post-pr5-planning-agent.md` (planning only; not MVP scope).
 
 ---
 
