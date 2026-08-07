@@ -104,3 +104,38 @@ def test_extract_surfaces_gemini_failure(
         files={"file": ("chart.pdf", b"%PDF-1.4 fake", "application/pdf")},
     )
     assert res.status_code == 502
+
+
+def test_extract_under_rate_limit_ok(
+    client, mock_extract_draft: ExtractDraft
+) -> None:
+    res = client.post(
+        "/api/v1/extract",
+        files={"file": ("chart.pdf", b"%PDF-1.4 fake", "application/pdf")},
+    )
+    assert res.status_code == 200
+    assert res.json()["first_name"] == mock_extract_draft.first_name
+
+
+def test_extract_over_rate_limit_returns_429(
+    client, mock_extract_draft: ExtractDraft, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from data_extracting_backend.config import get_settings
+    from data_extracting_backend.rate_limit import extract_limiter
+
+    monkeypatch.setenv("EXTRACT_RATE_LIMIT_PER_MINUTE", "1")
+    get_settings.cache_clear()
+    extract_limiter.reset()
+
+    files = {"file": ("chart.pdf", b"%PDF-1.4 fake", "application/pdf")}
+    first = client.post("/api/v1/extract", files=files)
+    assert first.status_code == 200
+
+    second = client.post("/api/v1/extract", files=files)
+    assert second.status_code == 429
+    body = second.json()["detail"]
+    assert body["error"] == "rate_limit_exceeded"
+    assert "message" in body
+    assert second.headers.get("retry-after") is not None
+
+    get_settings.cache_clear()

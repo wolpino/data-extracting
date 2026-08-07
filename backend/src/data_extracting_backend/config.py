@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     # Shared demo key for writes + /extract. Empty = open (local default).
     # Set on Render; pass via X-API-Key (not a Vite secret — UI uses sessionStorage).
     api_key: str = ""
+    # In-process /extract limit (per IP, per instance). Disable in tests if needed.
+    extract_rate_limit_enabled: bool = True
+    extract_rate_limit_per_minute: int = 15
 
     def cors_origin_list(self) -> list[str]:
         return [part.strip() for part in self.cors_origins.split(",") if part.strip()]

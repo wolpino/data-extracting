@@ -113,7 +113,7 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 - **Shared demo API key (not full auth)** — when `API_KEY` is set on the server, writes + `/extract` require `X-API-Key`. GETs stay open. The demo key is intentional for reviewers (README + UI paste); do not treat as production auth or put it in `VITE_*`.
 - SQLite on Render free tier is not durable across deploys.
 - PDF-only uploads; no malware scanning.
-- Extract rate limiting is on sibling branch `feature/pr9-extract-rate-limit` (merge into PR9).
+- `POST /api/v1/extract` is rate-limited in-process (`EXTRACT_RATE_LIMIT_PER_MINUTE`, default 15/min per client IP). Over-limit returns **429** + `Retry-After`. Limit is **per Render instance** (not shared across multiple instances on free tier).
 - Confirm UI uses a modal dialog (confirm-before-save intact).
 
 ## Known issues
