@@ -4,22 +4,20 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR0 — Spec / decisions / agent process / security baseline
-- **Status:** PR open for review — https://github.com/wolpino/data-extracting/pull/1 — **do not start PR1 until human approves**
+- **Phase:** PR1 — Scaffold
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/2 — pause for human review; **do not start PR2 until approved**
 
 ## Done
 
-- [x] SPEC approved + `docs/SPEC.md` (incl. security MVP vs later)
-- [x] `docs/DECISIONS.md` seeded
-- [x] `AGENTS.md` + Cursor rules
-- [x] `docs/PULL_REQUESTS.md` living log + mandate + PR0–PR5 acceptance criteria
-- [x] Root `.gitignore` (secrets / venv / node_modules / db)
-- [x] Detailed PR implementation plan in Cursor plan file
+- [x] PR0 merged
+- [x] Backend: uv + FastAPI health + settings stub
+- [x] Frontend: Vite React TS placeholder + `VITE_API_BASE_URL`
+- [x] `.env.example`, READMEs
 
 ## Next
 
-- Human reviews PR0
-- On go-ahead: PR1 scaffold (`backend/` uv+FastAPI, `frontend/` Vite React TS, `.env.example`, health route)
+- Human reviews PR1
+- On go-ahead: PR2 Order CRUD + activity log
 
 ## Blockers
 
@@ -27,4 +25,4 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Known issues
 
-- (none yet)
+- Soft PR file-count budget (~20) exceeded by scaffold lockfiles/template; documented in PULL_REQUESTS
