@@ -4,23 +4,25 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR4 — Gemini extract + confirm
-- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/6 — **do not start PR5 until approved**
+- **Phase:** PR5 — Deploy + README
+- **Status:** `in_progress` — branch `deploy/pr5-render-readme`
 
 ## Done
 
-- [x] PR0–PR3 merged
+- [x] PR0–PR4 merged (PR4: https://github.com/wolpino/data-extracting/pull/6)
 - [x] Extract + confirm API/UI; model `gemini-3.6-flash`
 - [x] Confirm UX debt logged for later
 
 ## Next
 
-- Human reviews PR4
-- On go-ahead: PR5 deploy + README
+- Render Web Service (API) + Static Site (UI)
+- README (architecture, limitations, Known issues, with-more-time)
+- Open GitHub PR5; pause for review
 
 ## Blockers
 
-- None
+- GitHub `gh` auth token invalid locally (need `gh auth refresh` to push/open PR)
+- Render CLI/API key not available yet — deploy via dashboard or API key
 
 ## Known issues
 
