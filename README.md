@@ -20,7 +20,7 @@ Secrets (`GEMINI_API_KEY`, etc.) live only in Render env / local `backend/.env` 
 ## For reviewers
 
 - **Happy path:** open the [UI](https://data-extracting-ui.onrender.com) → paste the **demo API key** (below) into the UI field if the server has `API_KEY` set → upload a PDF from [docs/testdata/](docs/testdata/) → edit the draft fields if needed → **Confirm** to save → list/edit/delete Orders (each mutation asks for Confirm).
-- **Demo API key:** when the API has `API_KEY` configured, writes and `/extract` require header `X-API-Key` (same value). Paste it into the UI “Demo API key” field (stored in `sessionStorage` only — **not** a `VITE_*` build secret). Suggested shared value for this take-home: `demo-reviewer-key` (set the same string as `API_KEY` on Render).
+- **Demo API key:** required **only when** the API has `API_KEY` set (e.g. Render). Then writes + `/extract` need header `X-API-Key` (same value) — paste into the UI “Demo API key” field (`sessionStorage` only; **not** a `VITE_*` secret). Shared take-home value: `demo-reviewer-key`. **Local default:** leave `API_KEY` empty in `backend/.env` and leave the UI field blank — no key needed. If you set `API_KEY` locally, paste the same value in the UI.
 - **Confirm-before-save:** `POST /extract` returns a draft only; Orders persist only after confirm (API + UI).
 - **Fake data only:** Buffy-themed names/fixtures — not real PHI. Expected fields for the small charts are listed in [docs/testdata/README.md](docs/testdata/README.md).
 - **API access:** `GET` list/activity/health stay open for browsing. Mutating Orders + `/extract` require the demo key when `API_KEY` is set. Still not full auth — harden further before real PHI.
@@ -122,7 +122,7 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 
 ## Limitations
 
-- **Shared demo API key (not full auth)** — when `API_KEY` is set on the server, writes + `/extract` require `X-API-Key`. GETs stay open. The demo key is intentional for reviewers (README + UI paste); do not treat as production auth or put it in `VITE_*`.
+- **Shared demo API key (not full auth)** — when `API_KEY` is set on the server, writes + `/extract` require `X-API-Key`. GETs stay open. Leave `API_KEY` unset for open local APIs. The demo key is intentional for reviewers (README + UI paste); do not treat as production auth or put it in `VITE_*`.
 - SQLite on Render free tier is not durable across deploys.
 - PDF-only uploads; no malware scanning.
 - `POST /api/v1/extract` is rate-limited in-process (`EXTRACT_RATE_LIMIT_PER_MINUTE`, default 15/min per client IP). Over-limit returns **429** + `Retry-After`. Limit is **per Render instance** (not shared across multiple instances on free tier).

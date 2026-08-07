@@ -222,9 +222,9 @@ function App() {
         />
       </label>
       <p className="muted api-key-hint">
-        Same value as server <code>API_KEY</code> (README). Stored in
-        sessionStorage only — not in the Vite build. Leave blank if the API
-        has no key configured.
+        Needed only when the API has <code>API_KEY</code> set (same value as
+        README / Render). Leave blank for local APIs with no key. Stored in
+        sessionStorage only — not in the Vite build.
       </p>
 
       {error && (
