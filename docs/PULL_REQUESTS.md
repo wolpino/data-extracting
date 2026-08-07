@@ -475,29 +475,30 @@ Add pytest suite per TESTING.md, gate Buffy startup seed behind `SEED_DEMO_DATA`
 
 ### Acceptance criteria
 
-- [x] Confirm dialog appears near the initiating action; Cancel/Confirm work
-- [x] After PDF extract, draft state is obvious; primary CTA saves Order only after confirm
-- [x] Activity list visible in UI (metadata only; no PDF bytes)
+- [x] Confirm & save is a single clear primary button (no second modal); delete uses browser confirm
+- [x] After PDF extract, draft state is obvious; incomplete extract errors without filling the form
+- [x] Activity list visible beside the form (scroll + load more; metadata only)
 - [x] Extract shows clear progress/error states
 - [x] Living PR log + PROGRESS updated; GitHub PR opened; pause
 
 ### Summary
 
-Replace top confirm banner with a modal, mark extract results as unsaved drafts, add `GET /api/v1/activity` + UI panel, and clarify extract progress/errors — without visual polish scope creep.
+Primary **Confirm & save Order** button (no second modal), draft badge for extracts, activity aside with scroll + load more, and 422 on incomplete extracts (no N/A drafts).
 
 ### Test plan
 
-- [x] `cd backend && uv run pytest` (includes activity API)
+- [x] `cd backend && uv run pytest`
 - [x] `cd frontend && npm run build`
-- [ ] Manual: upload Buffy PDF → edit draft → confirm via modal
-- [ ] Manual: create/edit/delete confirms
-- [ ] Manual: activity rows appear after actions
+- [ ] Manual: upload Buffy PDF → edit draft → **Confirm & save Order** (one step)
+- [ ] Manual: incomplete PDF shows error and does not fill the form
+- [ ] Manual: activity aside scrolls; Load more works
+- [ ] Manual: create / edit / delete (delete uses browser confirm)
 
 ### Notes / risks
 
-- Not visual polish / design system.
-- Confirm-before-save invariant must remain.
+- Confirm-before-save for extract = labeled button after reviewing fields (not a modal).
 - `GET /activity` does not write activity (avoids feedback loops).
+- Gemini may still return junk; server rejects N/A-style names with 422.
 
 ---
 

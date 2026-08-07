@@ -14,12 +14,19 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Confirm is the primary button (no double modal)
+
+- **Decision:** Extract/create/save use a clearly labeled primary button (`Confirm & save Order` / `Create Order` / `Save changes`) with no second modal. Delete keeps a single `window.confirm`. Incomplete extracts return 422 and do not populate the form; N/A placeholders are rejected.
+- **Reasoning:** Human check for extract is reviewing fields then confirming once; a modal after “review” was a double confirm. Activity sits beside the form as a scrollable aside with load-more.
+- **Alternatives considered:** Custom modal for all mutations; always show extract placeholders.
+- **Revisit when:** Stronger delete UX (inline undo) if needed.
+
 ### 2026-08-07 — Confirm UI: modal dialog (PR8)
 
 - **Decision:** Replace top-of-page confirm banner with a modal `alertdialog` focused on Confirm; keep confirm-before-save. Extract results use an explicit draft mode + “Confirm save Order…”.
 - **Reasoning:** Banner was easy to miss and froze the page awkwardly; modal keeps the invariant while making the action obvious.
 - **Alternatives considered:** Inline confirm only in each section; `window.confirm`.
-- **Revisit when:** Further a11y polish (focus trap / Esc) if reviewers need it.
+- **Revisit when:** Further a11y polish (focus trap / Esc) if reviewers need it. **Superseded by “Confirm is the primary button” above.**
 
 ### 2026-08-07 — Demo seed opt-in via SEED_DEMO_DATA
 

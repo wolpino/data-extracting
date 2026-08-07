@@ -1,5 +1,5 @@
 .app {
-  max-width: 52rem;
+  max-width: 56rem;
   margin: 2rem auto;
   padding: 0 1rem 3rem;
   font-family: system-ui, sans-serif;
@@ -21,6 +21,24 @@
   background: #e8f1fb;
   padding: 0.5rem 0.75rem;
   margin-top: 0.5rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(14rem, 0.85fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin: 1rem 0 1.5rem;
+}
+
+@media (max-width: 720px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workspace-main {
+  min-width: 0;
 }
 
 .section-head {
@@ -87,6 +105,58 @@ button.danger {
   color: #a11818;
 }
 
+/* Activity aside: reference panel — shorter than the form column, scrolls. */
+.activity-panel {
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.activity-panel h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.activity-help {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.activity-scroll {
+  max-height: 16rem;
+  overflow-y: auto;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.4rem;
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-list li {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.activity-when {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.activity-detail {
+  font-size: 0.82rem;
+  word-break: break-word;
+}
+
+.activity-more {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -103,29 +173,4 @@ td {
 
 code {
   font-size: 0.9em;
-}
-
-/* Near-action confirm: modal over the page instead of a top banner. */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  z-index: 20;
-}
-
-.modal {
-  background: #fff;
-  border: 1px solid #b45309;
-  max-width: 28rem;
-  width: 100%;
-  padding: 1rem 1.15rem 1.15rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-}
-
-.modal h3 {
-  margin: 0 0 0.5rem;
 }

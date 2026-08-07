@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import './App.css'
 import {
   apiBaseUrl,
@@ -31,12 +31,7 @@ const emptyForm: FormState = {
 /** Form origin — draft means extract result not yet confirmed to an Order. */
 type FormMode = 'manual' | 'draft' | 'edit'
 
-// Pending mutation — API is called only after explicit Confirm (SPEC).
-type Pending =
-  | { kind: 'create'; input: OrderInput }
-  | { kind: 'update'; id: number; input: OrderInput }
-  | { kind: 'delete'; order: Order }
-  | { kind: 'confirmExtract'; input: OrderInput }
+const ACTIVITY_PAGE = 15
 
 function toInput(form: FormState): OrderInput {
   const filename = form.source_filename.trim()
@@ -48,60 +43,46 @@ function toInput(form: FormState): OrderInput {
   }
 }
 
-function pendingLabel(pending: Pending): string {
-  if (pending.kind === 'create') {
-    return `Create order for ${pending.input.first_name} ${pending.input.last_name}?`
-  }
-  if (pending.kind === 'update') {
-    return `Save changes to order #${pending.id}?`
-  }
-  if (pending.kind === 'confirmExtract') {
-    return `Save extracted draft as an Order for ${pending.input.first_name} ${pending.input.last_name}?`
-  }
-  return `Delete order #${pending.order.id} (${pending.order.first_name} ${pending.order.last_name})?`
-}
-
 function App() {
   const [orders, setOrders] = useState<Order[]>([])
   const [activity, setActivity] = useState<Activity[]>([])
+  const [activityLimit, setActivityLimit] = useState(ACTIVITY_PAGE)
+  const [activityTotalHint, setActivityTotalHint] = useState(0)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [formMode, setFormMode] = useState<FormMode>('manual')
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [pending, setPending] = useState<Pending | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [extracting, setExtracting] = useState(false)
-  const confirmTitleId = useId()
-  const confirmButtonRef = useRef<HTMLButtonElement>(null)
+
+  const refreshOrders = useCallback(async () => {
+    setOrders(await listOrders())
+  }, [])
+
+  const refreshActivity = useCallback(async (limit: number) => {
+    // Fetch one extra to know if "load more" should show.
+    const rows = await listActivity(limit + 1)
+    setActivityTotalHint(rows.length)
+    setActivity(rows.slice(0, limit))
+  }, [])
 
   const refresh = useCallback(async () => {
-    const [orderRows, activityRows] = await Promise.all([
-      listOrders(),
-      listActivity(),
-    ])
-    setOrders(orderRows)
-    setActivity(activityRows)
-  }, [])
+    await Promise.all([refreshOrders(), refreshActivity(activityLimit)])
+  }, [refreshOrders, refreshActivity, activityLimit])
 
   useEffect(() => {
     void refresh().catch((err: unknown) => {
-      setError(err instanceof Error ? err.message : 'Failed to load orders')
+      setError(err instanceof Error ? err.message : 'Failed to load')
     })
   }, [refresh])
-
-  // Focus primary Confirm when the dialog opens (keyboard / SR friendly).
-  useEffect(() => {
-    if (pending) confirmButtonRef.current?.focus()
-  }, [pending])
 
   function resetForm() {
     setEditingId(null)
     setFormMode('manual')
     setForm(emptyForm)
-    setPending(null)
   }
 
-  function onSubmit(event: FormEvent) {
+  async function onSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
     const input = toInput(form)
@@ -109,19 +90,42 @@ function App() {
       setError('First name, last name, and date of birth are required.')
       return
     }
-    // Do not call API yet — wait for Confirm.
-    if (formMode === 'draft') {
-      setPending({ kind: 'confirmExtract', input })
-    } else if (editingId === null) {
-      setPending({ kind: 'create', input })
-    } else {
-      setPending({ kind: 'update', id: editingId, input })
+    setBusy(true)
+    try {
+      // Button label is the human confirm — no second modal (extract / create / save).
+      if (formMode === 'draft') {
+        await confirmOrder(input)
+      } else if (editingId === null) {
+        await createOrder(input)
+      } else {
+        await updateOrder(editingId, input)
+      }
+      await refresh()
+      resetForm()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Request failed')
+    } finally {
+      setBusy(false)
     }
   }
 
-  function requestDelete(order: Order) {
+  async function requestDelete(order: Order) {
     setError(null)
-    setPending({ kind: 'delete', order })
+    // Destructive path: one browser confirm (SPEC); no custom modal stack.
+    const ok = window.confirm(
+      `Delete order #${order.id} (${order.first_name} ${order.last_name})?`,
+    )
+    if (!ok) return
+    setBusy(true)
+    try {
+      await deleteOrder(order.id)
+      await refresh()
+      if (editingId === order.id) resetForm()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Delete failed')
+    } finally {
+      setBusy(false)
+    }
   }
 
   function startEdit(order: Order) {
@@ -133,14 +137,12 @@ function App() {
       date_of_birth: order.date_of_birth,
       source_filename: order.source_filename ?? '',
     })
-    setPending(null)
     setError(null)
   }
 
   async function onExtractFile(file: File | null) {
     if (!file) return
     setError(null)
-    setPending(null)
     setExtracting(true)
     try {
       const draft = await extractDocument(file)
@@ -153,31 +155,22 @@ function App() {
         source_filename: file.name,
       })
     } catch (err: unknown) {
+      // Incomplete / failed extract must not leave a half-filled draft.
+      resetForm()
       setError(err instanceof Error ? err.message : 'Extract failed')
     } finally {
       setExtracting(false)
     }
   }
 
-  async function confirmPending() {
-    if (!pending) return
+  async function loadMoreActivity() {
+    const next = activityLimit + ACTIVITY_PAGE
+    setActivityLimit(next)
     setBusy(true)
-    setError(null)
     try {
-      if (pending.kind === 'create') {
-        await createOrder(pending.input)
-      } else if (pending.kind === 'update') {
-        await updateOrder(pending.id, pending.input)
-      } else if (pending.kind === 'confirmExtract') {
-        await confirmOrder(pending.input)
-      } else {
-        await deleteOrder(pending.order.id)
-      }
-      await refresh()
-      resetForm()
+      await refreshActivity(next)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Request failed')
-      setPending(null)
+      setError(err instanceof Error ? err.message : 'Failed to load activity')
     } finally {
       setBusy(false)
     }
@@ -192,18 +185,20 @@ function App() {
 
   const primarySubmitLabel =
     formMode === 'draft'
-      ? 'Confirm save Order…'
+      ? 'Confirm & save Order'
       : formMode === 'edit'
-        ? 'Review save…'
-        : 'Review create…'
+        ? 'Save changes'
+        : 'Create Order'
 
-  const locked = busy || extracting || pending !== null
+  const locked = busy || extracting
+  const canLoadMoreActivity = activityTotalHint > activityLimit
 
   return (
     <main className="app">
       <h1>Orders</h1>
       <p className="muted">
-        API: <code>{apiBaseUrl}</code> — confirm before every save/delete.
+        API: <code>{apiBaseUrl}</code> — review extracted fields, then{' '}
+        <strong>Confirm &amp; save</strong> (or create/save manually).
       </p>
 
       {error && (
@@ -215,8 +210,8 @@ function App() {
       <section>
         <h2>Extract from PDF</h2>
         <p className="muted">
-          Upload returns a <strong>draft only</strong>. Review fields below,
-          then confirm to save an Order.
+          Upload returns a draft only when first name, last name, and DOB are
+          all found. Incomplete PDFs show an error and do not fill the form.
         </p>
         <input
           type="file"
@@ -235,74 +230,122 @@ function App() {
         )}
       </section>
 
-      <section>
-        <div className="section-head">
-          <h2>{formTitle}</h2>
-          {formMode === 'draft' && (
-            <span className="badge" title="Not persisted until you confirm">
-              Draft — not saved
-            </span>
-          )}
-        </div>
-        <form className="form" onSubmit={onSubmit}>
-          <label>
-            First name
-            <input
-              value={form.first_name}
-              onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-              required
-              disabled={extracting}
-            />
-          </label>
-          <label>
-            Last name
-            <input
-              value={form.last_name}
-              onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-              required
-              disabled={extracting}
-            />
-          </label>
-          <label>
-            Date of birth
-            <input
-              type="date"
-              value={form.date_of_birth}
-              onChange={(e) =>
-                setForm({ ...form, date_of_birth: e.target.value })
-              }
-              required
-              disabled={extracting}
-            />
-          </label>
-          <label>
-            Source filename (optional)
-            <input
-              value={form.source_filename}
-              onChange={(e) =>
-                setForm({ ...form, source_filename: e.target.value })
-              }
-              placeholder="chart.pdf"
-              disabled={extracting}
-            />
-          </label>
-          <div className="row">
-            <button type="submit" disabled={locked}>
-              {primarySubmitLabel}
-            </button>
-            {(formMode === 'edit' || formMode === 'draft') && (
-              <button
-                type="button"
-                className="secondary"
-                disabled={busy || extracting}
-                onClick={resetForm}
-              >
-                {formMode === 'draft' ? 'Discard draft' : 'Cancel edit'}
-              </button>
+      <div className="workspace">
+        <section className="workspace-main">
+          <div className="section-head">
+            <h2>{formTitle}</h2>
+            {formMode === 'draft' && (
+              <span className="badge" title="Not persisted until you confirm & save">
+                Draft — not saved
+              </span>
             )}
           </div>
-        </form>
-      </section>
+          <form className="form" onSubmit={(e) => void onSubmit(e)}>
+            <label>
+              First name
+              <input
+                value={form.first_name}
+                onChange={(e) =>
+                  setForm({ ...form, first_name: e.target.value })
+                }
+                required
+                disabled={extracting}
+              />
+            </label>
+            <label>
+              Last name
+              <input
+                value={form.last_name}
+                onChange={(e) =>
+                  setForm({ ...form, last_name: e.target.value })
+                }
+                required
+                disabled={extracting}
+              />
+            </label>
+            <label>
+              Date of birth
+              <input
+                type="date"
+                value={form.date_of_birth}
+                onChange={(e) =>
+                  setForm({ ...form, date_of_birth: e.target.value })
+                }
+                required
+                disabled={extracting}
+              />
+            </label>
+            <label>
+              Source filename (optional)
+              <input
+                value={form.source_filename}
+                onChange={(e) =>
+                  setForm({ ...form, source_filename: e.target.value })
+                }
+                placeholder="chart.pdf"
+                disabled={extracting}
+              />
+            </label>
+            <div className="row">
+              <button type="submit" disabled={locked}>
+                {primarySubmitLabel}
+              </button>
+              {(formMode === 'edit' || formMode === 'draft') && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={busy || extracting}
+                  onClick={resetForm}
+                >
+                  {formMode === 'draft' ? 'Discard draft' : 'Cancel edit'}
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
+
+        <aside className="activity-panel" aria-label="Recent activity">
+          <h2>Activity</h2>
+          <p className="muted activity-help">
+            Audit log (metadata only).
+          </p>
+          <div className="activity-scroll">
+            {activity.length === 0 ? (
+              <p className="muted">No activity yet.</p>
+            ) : (
+              <ul className="activity-list">
+                {activity.map((row) => (
+                  <li key={row.id}>
+                    <div className="activity-when">
+                      {new Date(row.created_at).toLocaleString()}
+                    </div>
+                    <div>
+                      <strong>{row.action}</strong>{' '}
+                      <span className="muted">
+                        {row.entity_type}
+                        {row.entity_id != null ? ` #${row.entity_id}` : ''}
+                      </span>
+                    </div>
+                    {row.detail && (
+                      <div className="activity-detail muted">{row.detail}</div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {canLoadMoreActivity && (
+            <button
+              type="button"
+              className="secondary activity-more"
+              disabled={busy}
+              onClick={() => void loadMoreActivity()}
+            >
+              Load more
+            </button>
+          )}
+        </aside>
+      </div>
 
       <section>
         <h2>All orders</h2>
@@ -341,9 +384,9 @@ function App() {
                       type="button"
                       className="danger"
                       disabled={locked}
-                      onClick={() => requestDelete(order)}
+                      onClick={() => void requestDelete(order)}
                     >
-                      Delete…
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -352,82 +395,6 @@ function App() {
           </table>
         )}
       </section>
-
-      <section>
-        <h2>Recent activity</h2>
-        <p className="muted">
-          Server audit log (metadata only — no PDF contents).
-        </p>
-        {activity.length === 0 ? (
-          <p className="muted">No activity yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>When</th>
-                <th>Action</th>
-                <th>Entity</th>
-                <th>Detail</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activity.map((row) => (
-                <tr key={row.id}>
-                  <td>{new Date(row.created_at).toLocaleString()}</td>
-                  <td>{row.action}</td>
-                  <td>
-                    {row.entity_type}
-                    {row.entity_id != null ? ` #${row.entity_id}` : ''}
-                  </td>
-                  <td>{row.detail ?? '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
-
-      {pending && (
-        <div
-          className="modal-backdrop"
-          role="presentation"
-          onClick={() => {
-            if (!busy) setPending(null)
-          }}
-        >
-          <div
-            className="modal"
-            role="alertdialog"
-            aria-modal="true"
-            aria-labelledby={confirmTitleId}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 id={confirmTitleId}>Confirm</h3>
-            <p>{pendingLabel(pending)}</p>
-            <p className="muted">
-              Nothing is written until you confirm (confirm-before-save).
-            </p>
-            <div className="row">
-              <button
-                ref={confirmButtonRef}
-                type="button"
-                disabled={busy}
-                onClick={() => void confirmPending()}
-              >
-                Confirm
-              </button>
-              <button
-                type="button"
-                className="secondary"
-                disabled={busy}
-                onClick={() => setPending(null)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   )
 }

@@ -57,6 +57,9 @@ async function readError(response: Response): Promise<string> {
   }
 
   // Map common extract/API failures to clearer copy (status is the signal).
+  if (response.status === 422) {
+    return detail || 'Could not use this PDF — required fields missing or invalid.'
+  }
   if (response.status === 415) {
     return detail || 'Only PDF uploads are supported.'
   }
