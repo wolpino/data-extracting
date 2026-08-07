@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from datetime import date
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
 from data_extracting_backend.api.v1 import api_router
@@ -47,6 +48,16 @@ app = FastAPI(
     version="0.1.0",
     description="Order CRUD + document extract MVP.",
     lifespan=lifespan,
+)
+
+# Allowlist only (CORS_ORIGINS). Browser UI needs this; curl does not.
+_settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_settings.cors_origin_list(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(api_router)

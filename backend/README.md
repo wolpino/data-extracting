@@ -68,4 +68,6 @@ Orders:
 
 On startup the API creates SQLite tables and seeds a Buffy Summers demo order if missing.
 
+CORS: set `CORS_ORIGINS` to a comma-separated allowlist (default `http://localhost:5173`). Do not use `*` for production demos.
+
 Copy env placeholders from the repo root `.env.example`. Do not commit real secrets.

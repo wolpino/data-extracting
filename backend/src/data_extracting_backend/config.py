@@ -14,8 +14,11 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./app.db"
     gemini_api_key: str = ""
-    # Comma-separated origins; CORS middleware lands in PR3.
+    # Comma-separated allowlist — never use * in production demos.
     cors_origins: str = "http://localhost:5173"
+
+    def cors_origin_list(self) -> list[str]:
+        return [part.strip() for part in self.cors_origins.split(",") if part.strip()]
 
 
 @lru_cache
