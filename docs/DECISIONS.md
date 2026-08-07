@@ -14,11 +14,11 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
-### 2026-08-07 — Render deploy via Blueprint + pip requirements
+### 2026-08-07 — Render deploy via Blueprint + uv sync
 
-- **Decision:** Ship `render.yaml` (API web service + static UI) and commit `backend/requirements.txt` from `uv export` for Render’s `pip install -r requirements.txt` path; keep uv for local dev.
-- **Reasoning:** Matches official Render FastAPI quickstart; avoids relying on uv being present on the build image. Static site uses Vite build-time `VITE_API_BASE_URL`; CORS allowlist set after both public URLs exist.
-- **Alternatives considered:** uv-only build on Render; Docker; single combined service serving API + static files.
+- **Decision:** Ship `render.yaml` (API web service + static UI) using Render’s native uv support: rootDir `backend/` (with `uv.lock`), build `uv sync --frozen`, start `uv run uvicorn …`.
+- **Reasoning:** Project is uv-first; Render enables uv when `uv.lock` is present ([uv-version](https://render.com/docs/uv-version)). Avoids a parallel pip/`requirements.txt` install path.
+- **Alternatives considered:** `pip install -r requirements.txt` from `uv export`; Docker; single combined service serving API + static files.
 - **Revisit when:** Need durable Postgres disk or custom Docker for native deps.
 
 ### 2026-08-07 — Stack lock

@@ -6,10 +6,10 @@ services:
     name: data-extracting-api
     runtime: python
     plan: free
+    # Root must contain uv.lock so Render enables uv (https://render.com/docs/uv-version).
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    # Package layout: uvicorn imports data_extracting_backend from the editable install (-e .).
-    startCommand: uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: uv sync --frozen
+    startCommand: uv run uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION

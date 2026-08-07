@@ -26,7 +26,7 @@ Browser (Vite React TS)
 
 | Piece | Choice |
 |-------|--------|
-| Backend | Python 3.12, FastAPI, uv (local) / pip `requirements.txt` (Render) |
+| Backend | Python 3.12, FastAPI, uv (`uv.lock` + `uv sync` on Render) |
 | Frontend | Vite + React + TypeScript |
 | LLM | Gemini (`GEMINI_MODEL`, default `gemini-3.6-flash`), key server-side only |
 | DB | SQLite via SQLAlchemy; `DATABASE_URL` swap-ready for Postgres |
@@ -65,9 +65,9 @@ More curl notes: [backend/README.md](backend/README.md).
 
 Blueprint: [render.yaml](render.yaml) (Web Service + Static Site).
 
-1. **API** — New → Blueprint (or Web Service), root `backend/`  
-   - Build: `pip install -r requirements.txt`  
-   - Start: `uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT`  
+1. **API** — New → Blueprint (or Web Service), root `backend/` (must include `uv.lock`)  
+   - Build: `uv sync --frozen`  
+   - Start: `uv run uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT`  
    - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS` (include the static site `https://…onrender.com`), optional `MAX_UPLOAD_BYTES`
 2. **UI** — Static Site, root `frontend/`  
    - Build: `npm ci && npm run build`  
