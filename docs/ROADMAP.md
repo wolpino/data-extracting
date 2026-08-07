@@ -48,7 +48,8 @@ Prioritized after a green public deploy. Aligns with SPEC SHOULD/CUT and [DECISI
 | Manual checklist | PR6 (README); extend every PR | Health → upload → confirm → CRUD |
 | Buffy PDF fixtures | PR6 (`docs/testdata/`) | Small fake charts + expected name/DOB table |
 | Shell smokes | Already shipped; keep green | `smoke_orders.sh`, `smoke_extract.sh` |
-| Written automated | **PR7** (extend in PR8 for activity) | Schemas + TestClient; mock Gemini |
+| Written automated | **PR7** (extend in PR8 for activity) | Schemas + TestClient; mock Gemini; see [TESTING.md](./TESTING.md) |
+| Demo seed | Local opt-in | `SEED_DEMO_DATA=true` locally; default/off on Render |
 
 ## Security track
 

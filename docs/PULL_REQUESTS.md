@@ -416,8 +416,9 @@ Ship reviewer-facing README (live URLs + manual checklist), expand post-MVP ROAD
 
 - **Status:** `ready_for_review`
 - **Branch:** `test/pr7-written-tests`
-- **GitHub:** _(set when opened)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/9
 - **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR6 merged/approved
 
 ### Scope

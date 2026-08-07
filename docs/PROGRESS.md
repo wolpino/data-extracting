@@ -5,9 +5,8 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR7 — Written automated tests
-- **Status:** `ready_for_review` — branch `test/pr7-written-tests`
-- **GitHub:** _(set when opened)_
-
+- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/9
+- **Branch:** `test/pr7-written-tests`
 ## Done
 
 - [x] PR0–PR6 merged (PR6: https://github.com/wolpino/data-extracting/pull/8)
