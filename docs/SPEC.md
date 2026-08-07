@@ -141,7 +141,7 @@ See [DECISIONS.md](./DECISIONS.md). Summary:
 | PR4 | Gemini extract + confirm flow (API + UI) | After PR open; mid-checkpoint if >~20 files |
 | PR5 | Render deploy + README | After PR open |
 
-PR body always includes: **Summary**, **Test plan**, **Notes / risks** — also mirrored in [PULL_REQUESTS.md](./PULL_REQUESTS.md).
+PR body always includes: **Summary**, **Test plan**, **Notes / risks** — also mirrored in [PULL_REQUESTS.md](./PULL_REQUESTS.md). That file lists **all planned PRs with acceptance criteria**; agents update status as work progresses.
 
 ## Checkpoint / stuck protocol
 

@@ -12,7 +12,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 - [x] SPEC approved + `docs/SPEC.md` (incl. security MVP vs later)
 - [x] `docs/DECISIONS.md` seeded
 - [x] `AGENTS.md` + Cursor rules
-- [x] `docs/PULL_REQUESTS.md` living log + mandate
+- [x] `docs/PULL_REQUESTS.md` living log + mandate + PR0–PR5 acceptance criteria
 - [x] Root `.gitignore` (secrets / venv / node_modules / db)
 - [x] Detailed PR implementation plan in Cursor plan file
 
