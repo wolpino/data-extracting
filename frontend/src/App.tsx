@@ -55,6 +55,8 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [extracting, setExtracting] = useState(false)
+  // Inline delete confirm — Confirm / Cancel buttons on the row (not window.confirm).
+  const [deleteCandidate, setDeleteCandidate] = useState<Order | null>(null)
 
   const refreshOrders = useCallback(async () => {
     setOrders(await listOrders())
@@ -110,16 +112,14 @@ function App() {
     }
   }
 
-  async function requestDelete(order: Order) {
+  async function confirmDelete() {
+    if (!deleteCandidate) return
+    const order = deleteCandidate
     setError(null)
-    // Destructive path: one browser confirm (SPEC); no custom modal stack.
-    const ok = window.confirm(
-      `Delete order #${order.id} (${order.first_name} ${order.last_name})?`,
-    )
-    if (!ok) return
     setBusy(true)
     try {
       await deleteOrder(order.id)
+      setDeleteCandidate(null)
       await refresh()
       if (editingId === order.id) resetForm()
     } catch (err: unknown) {
@@ -130,6 +130,7 @@ function App() {
   }
 
   function startEdit(order: Order) {
+    setDeleteCandidate(null)
     setEditingId(order.id)
     setFormMode('edit')
     setForm({
@@ -319,8 +320,9 @@ function App() {
                   const when = formatActivityWhen(row.created_at)
                   return (
                     <li key={row.id}>
-                      <div className="activity-when" title={when.title}>
-                        {when.label}
+                      <div className="activity-when">
+                        <span className="activity-relative">{when.relative}</span>
+                        <span className="activity-absolute">{when.absolute}</span>
                       </div>
                       <div className="activity-summary">
                         {formatActivitySummary(row)}
@@ -369,22 +371,51 @@ function App() {
                   <td>{order.date_of_birth}</td>
                   <td>{order.source_filename ?? '—'}</td>
                   <td className="row">
-                    <button
-                      type="button"
-                      className="secondary"
-                      disabled={locked}
-                      onClick={() => startEdit(order)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="danger"
-                      disabled={locked}
-                      onClick={() => void requestDelete(order)}
-                    >
-                      Delete
-                    </button>
+                    {deleteCandidate?.id === order.id ? (
+                      <>
+                        <span className="delete-prompt">
+                          Delete #{order.id}?
+                        </span>
+                        <button
+                          type="button"
+                          className="danger"
+                          disabled={busy}
+                          onClick={() => void confirmDelete()}
+                        >
+                          Confirm delete
+                        </button>
+                        <button
+                          type="button"
+                          className="secondary"
+                          disabled={busy}
+                          onClick={() => setDeleteCandidate(null)}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className="secondary"
+                          disabled={locked}
+                          onClick={() => startEdit(order)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="danger"
+                          disabled={locked}
+                          onClick={() => {
+                            setError(null)
+                            setDeleteCandidate(order)
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

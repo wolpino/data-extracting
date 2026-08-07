@@ -53,27 +53,48 @@ export function formatActivitySummary(row: Activity): string {
   return `${verb} ${entityPhrase(row)}`
 }
 
-export function formatActivityWhen(iso: string): { label: string; title: string } {
-  const when = new Date(iso)
-  const title = when.toLocaleString()
-  const seconds = Math.round((Date.now() - when.getTime()) / 1000)
-  if (Number.isNaN(seconds)) return { label: title, title }
-  if (seconds < 45) return { label: 'Just now', title }
-  if (seconds < 3600) {
+export function parseActivityDate(iso: string): Date {
+  // SQLite/SQLAlchemy often emit naive UTC timestamps without "Z"; JS would
+  // treat those as local and skew relative times (everything looks "Just now").
+  const trimmed = iso.trim()
+  if (/[zZ]$|[+-]\d{2}:\d{2}$/.test(trimmed)) {
+    return new Date(trimmed)
+  }
+  if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) {
+    return new Date(`${trimmed}Z`)
+  }
+  return new Date(trimmed)
+}
+
+export function formatActivityWhen(iso: string): {
+  relative: string
+  absolute: string
+} {
+  const when = parseActivityDate(iso)
+  const absolute = when.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+  if (Number.isNaN(when.getTime())) {
+    return { relative: iso, absolute: iso }
+  }
+  const seconds = Math.max(0, Math.round((Date.now() - when.getTime()) / 1000))
+  let relative: string
+  if (seconds < 45) relative = 'Just now'
+  else if (seconds < 3600) {
     const m = Math.max(1, Math.round(seconds / 60))
-    return { label: `${m} min ago`, title }
-  }
-  if (seconds < 86400) {
+    relative = `${m} min ago`
+  } else if (seconds < 86400) {
     const h = Math.max(1, Math.round(seconds / 3600))
-    return { label: `${h} hr ago`, title }
-  }
-  return {
-    label: when.toLocaleString(undefined, {
+    relative = `${h} hr ago`
+  } else {
+    relative = when.toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    }),
-    title,
+    })
   }
+  return { relative, absolute }
 }

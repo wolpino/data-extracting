@@ -497,6 +497,7 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 ### Notes / risks
 
 - Confirm-before-save for extract = labeled button after reviewing fields (not a modal).
+- Delete uses inline **Confirm delete** / Cancel on the row.
 - `GET /activity` does not write activity (avoids feedback loops).
 - Gemini may still return junk; server rejects N/A-style names with 422.
 

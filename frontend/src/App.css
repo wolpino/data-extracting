@@ -143,12 +143,29 @@ button.danger {
 }
 
 .activity-when {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.15rem;
+}
+
+.activity-relative {
   font-size: 0.78rem;
   color: #6b7280;
 }
 
+.activity-absolute {
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
 .activity-summary {
   font-size: 0.9rem;
+}
+
+.delete-prompt {
+  font-size: 0.9rem;
+  color: #a11818;
 }
 
 .activity-more {
