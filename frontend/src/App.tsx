@@ -6,11 +6,14 @@ import {
   createOrder,
   deleteOrder,
   extractDocument,
+  listActivity,
   listOrders,
+  type Activity,
   type Order,
   type OrderInput,
   updateOrder,
 } from './api'
+import { formatActivitySummary, formatActivityWhen } from './activityFormat'
 
 type FormState = {
   first_name: string
@@ -26,13 +29,10 @@ const emptyForm: FormState = {
   source_filename: '',
 }
 
-// Pending mutation — API is called only after explicit Confirm (SPEC).
-// UX debt: banner at top is clunky — replace with near-action modal later.
-type Pending =
-  | { kind: 'create'; input: OrderInput }
-  | { kind: 'update'; id: number; input: OrderInput }
-  | { kind: 'delete'; order: Order }
-  | { kind: 'confirmExtract'; input: OrderInput }
+/** Form origin — draft means extract result not yet confirmed to an Order. */
+type FormMode = 'manual' | 'draft' | 'edit'
+
+const ACTIVITY_PAGE = 15
 
 function toInput(form: FormState): OrderInput {
   const filename = form.source_filename.trim()
@@ -46,25 +46,46 @@ function toInput(form: FormState): OrderInput {
 
 function App() {
   const [orders, setOrders] = useState<Order[]>([])
+  const [activity, setActivity] = useState<Activity[]>([])
+  const [activityLimit, setActivityLimit] = useState(ACTIVITY_PAGE)
+  const [activityTotalHint, setActivityTotalHint] = useState(0)
   const [form, setForm] = useState<FormState>(emptyForm)
+  const [formMode, setFormMode] = useState<FormMode>('manual')
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [pending, setPending] = useState<Pending | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [extracting, setExtracting] = useState(false)
+  // Inline delete confirm — Confirm / Cancel buttons on the row (not window.confirm).
+  const [deleteCandidate, setDeleteCandidate] = useState<Order | null>(null)
+
+  const refreshOrders = useCallback(async () => {
+    setOrders(await listOrders())
+  }, [])
+
+  const refreshActivity = useCallback(async (limit: number) => {
+    // Fetch one extra to know if "load more" should show.
+    const rows = await listActivity(limit + 1)
+    setActivityTotalHint(rows.length)
+    setActivity(rows.slice(0, limit))
+  }, [])
 
   const refresh = useCallback(async () => {
-    const rows = await listOrders()
-    setOrders(rows)
-  }, [])
+    await Promise.all([refreshOrders(), refreshActivity(activityLimit)])
+  }, [refreshOrders, refreshActivity, activityLimit])
 
   useEffect(() => {
     void refresh().catch((err: unknown) => {
-      setError(err instanceof Error ? err.message : 'Failed to load orders')
+      setError(err instanceof Error ? err.message : 'Failed to load')
     })
   }, [refresh])
 
-  function onSubmit(event: FormEvent) {
+  function resetForm() {
+    setEditingId(null)
+    setFormMode('manual')
+    setForm(emptyForm)
+  }
+
+  async function onSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
     const input = toInput(form)
@@ -72,45 +93,63 @@ function App() {
       setError('First name, last name, and date of birth are required.')
       return
     }
-    // Do not call API yet — wait for Confirm.
-    if (editingId === null) {
-      setPending({ kind: 'create', input })
-    } else {
-      setPending({ kind: 'update', id: editingId, input })
+    setBusy(true)
+    try {
+      // Button label is the human confirm — no second modal (extract / create / save).
+      if (formMode === 'draft') {
+        await confirmOrder(input)
+      } else if (editingId === null) {
+        await createOrder(input)
+      } else {
+        await updateOrder(editingId, input)
+      }
+      await refresh()
+      resetForm()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Request failed')
+    } finally {
+      setBusy(false)
     }
   }
 
-  function requestDelete(order: Order) {
+  async function confirmDelete() {
+    if (!deleteCandidate) return
+    const order = deleteCandidate
     setError(null)
-    setPending({ kind: 'delete', order })
+    setBusy(true)
+    try {
+      await deleteOrder(order.id)
+      setDeleteCandidate(null)
+      await refresh()
+      if (editingId === order.id) resetForm()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Delete failed')
+    } finally {
+      setBusy(false)
+    }
   }
 
   function startEdit(order: Order) {
+    setDeleteCandidate(null)
     setEditingId(order.id)
+    setFormMode('edit')
     setForm({
       first_name: order.first_name,
       last_name: order.last_name,
       date_of_birth: order.date_of_birth,
       source_filename: order.source_filename ?? '',
     })
-    setPending(null)
     setError(null)
-  }
-
-  function resetForm() {
-    setEditingId(null)
-    setForm(emptyForm)
-    setPending(null)
   }
 
   async function onExtractFile(file: File | null) {
     if (!file) return
     setError(null)
-    setPending(null)
     setExtracting(true)
     try {
       const draft = await extractDocument(file)
       setEditingId(null)
+      setFormMode('draft')
       setForm({
         first_name: draft.first_name,
         last_name: draft.last_name,
@@ -118,176 +157,194 @@ function App() {
         source_filename: file.name,
       })
     } catch (err: unknown) {
+      // Incomplete / failed extract must not leave a half-filled draft.
+      resetForm()
       setError(err instanceof Error ? err.message : 'Extract failed')
     } finally {
       setExtracting(false)
     }
   }
 
-  function reviewExtractConfirm() {
-    setError(null)
-    const input = toInput(form)
-    if (!input.first_name || !input.last_name || !input.date_of_birth) {
-      setError('First name, last name, and date of birth are required.')
-      return
-    }
-    setPending({ kind: 'confirmExtract', input })
-  }
-
-  async function confirmPending() {
-    if (!pending) return
+  async function loadMoreActivity() {
+    const next = activityLimit + ACTIVITY_PAGE
+    setActivityLimit(next)
     setBusy(true)
-    setError(null)
     try {
-      if (pending.kind === 'create') {
-        await createOrder(pending.input)
-      } else if (pending.kind === 'update') {
-        await updateOrder(pending.id, pending.input)
-      } else if (pending.kind === 'confirmExtract') {
-        await confirmOrder(pending.input)
-      } else {
-        await deleteOrder(pending.order.id)
-      }
-      await refresh()
-      resetForm()
+      await refreshActivity(next)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Request failed')
-      setPending(null)
+      setError(err instanceof Error ? err.message : 'Failed to load activity')
     } finally {
       setBusy(false)
     }
   }
 
-  const pendingLabel = (() => {
-    if (!pending) return ''
-    if (pending.kind === 'create') {
-      return `Create order for ${pending.input.first_name} ${pending.input.last_name}?`
-    }
-    if (pending.kind === 'update') {
-      return `Save changes to order #${pending.id}?`
-    }
-    if (pending.kind === 'confirmExtract') {
-      return `Confirm extracted order for ${pending.input.first_name} ${pending.input.last_name}?`
-    }
-    return `Delete order #${pending.order.id} (${pending.order.first_name} ${pending.order.last_name})?`
-  })()
+  const formTitle =
+    formMode === 'draft'
+      ? 'Extracted draft'
+      : formMode === 'edit'
+        ? `Edit order #${editingId}`
+        : 'New order (manual)'
+
+  const primarySubmitLabel =
+    formMode === 'draft'
+      ? 'Confirm & save Order'
+      : formMode === 'edit'
+        ? 'Save changes'
+        : 'Create Order'
+
+  const locked = busy || extracting
+  const canLoadMoreActivity = activityTotalHint > activityLimit
 
   return (
     <main className="app">
       <h1>Orders</h1>
       <p className="muted">
-        API: <code>{apiBaseUrl}</code> — confirm before every save/delete.
+        API: <code>{apiBaseUrl}</code> — review extracted fields, then{' '}
+        <strong>Confirm &amp; save</strong> (or create/save manually).
       </p>
 
-      {error && <p className="error">{error}</p>}
-
-      {pending && (
-        <div className="confirm" role="alertdialog" aria-label="Confirm action">
-          <p>{pendingLabel}</p>
-          <p className="muted">
-            Temporary confirm UI — will move near the action later.
-          </p>
-          <div className="row">
-            <button type="button" disabled={busy} onClick={() => void confirmPending()}>
-              Confirm
-            </button>
-            <button
-              type="button"
-              className="secondary"
-              disabled={busy}
-              onClick={() => setPending(null)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
       )}
 
       <section>
         <h2>Extract from PDF</h2>
         <p className="muted">
-          Upload returns a draft only. Review fields, then Confirm to save an
-          Order.
+          Upload returns a draft only when first name, last name, and DOB are
+          all found. Incomplete PDFs show an error and do not fill the form.
         </p>
         <input
           type="file"
           accept="application/pdf,.pdf"
-          disabled={busy || extracting || pending !== null}
+          disabled={locked}
           onChange={(e) => {
             const file = e.target.files?.[0] ?? null
             void onExtractFile(file)
             e.target.value = ''
           }}
         />
-        {extracting && <p className="muted">Extracting…</p>}
-        <div className="row" style={{ marginTop: '0.75rem' }}>
-          <button
-            type="button"
-            disabled={busy || extracting || pending !== null}
-            onClick={reviewExtractConfirm}
-          >
-            Review extract save…
-          </button>
-        </div>
+        {extracting && (
+          <p className="status" aria-live="polite">
+            Extracting with Gemini… this can take a few seconds.
+          </p>
+        )}
       </section>
 
-      <section>
-        <h2>{editingId === null ? 'New order' : `Edit order #${editingId}`}</h2>
-        <form className="form" onSubmit={onSubmit}>
-          <label>
-            First name
-            <input
-              value={form.first_name}
-              onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-              required
-            />
-          </label>
-          <label>
-            Last name
-            <input
-              value={form.last_name}
-              onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-              required
-            />
-          </label>
-          <label>
-            Date of birth
-            <input
-              type="date"
-              value={form.date_of_birth}
-              onChange={(e) =>
-                setForm({ ...form, date_of_birth: e.target.value })
-              }
-              required
-            />
-          </label>
-          <label>
-            Source filename (optional)
-            <input
-              value={form.source_filename}
-              onChange={(e) =>
-                setForm({ ...form, source_filename: e.target.value })
-              }
-              placeholder="chart.pdf"
-            />
-          </label>
-          <div className="row">
-            <button type="submit" disabled={busy || pending !== null}>
-              {editingId === null ? 'Review create…' : 'Review save…'}
-            </button>
-            {editingId !== null && (
-              <button
-                type="button"
-                className="secondary"
-                disabled={busy}
-                onClick={resetForm}
-              >
-                Cancel edit
-              </button>
+      <div className="workspace">
+        <section className="workspace-main">
+          <div className="section-head">
+            <h2>{formTitle}</h2>
+            {formMode === 'draft' && (
+              <span className="badge" title="Not persisted until you confirm & save">
+                Draft — not saved
+              </span>
             )}
           </div>
-        </form>
-      </section>
+          <form className="form" onSubmit={(e) => void onSubmit(e)}>
+            <label>
+              First name
+              <input
+                value={form.first_name}
+                onChange={(e) =>
+                  setForm({ ...form, first_name: e.target.value })
+                }
+                required
+                disabled={extracting}
+              />
+            </label>
+            <label>
+              Last name
+              <input
+                value={form.last_name}
+                onChange={(e) =>
+                  setForm({ ...form, last_name: e.target.value })
+                }
+                required
+                disabled={extracting}
+              />
+            </label>
+            <label>
+              Date of birth
+              <input
+                type="date"
+                value={form.date_of_birth}
+                onChange={(e) =>
+                  setForm({ ...form, date_of_birth: e.target.value })
+                }
+                required
+                disabled={extracting}
+              />
+            </label>
+            <label>
+              Source filename (optional)
+              <input
+                value={form.source_filename}
+                onChange={(e) =>
+                  setForm({ ...form, source_filename: e.target.value })
+                }
+                placeholder="chart.pdf"
+                disabled={extracting}
+              />
+            </label>
+            <div className="row">
+              <button type="submit" disabled={locked}>
+                {primarySubmitLabel}
+              </button>
+              {(formMode === 'edit' || formMode === 'draft') && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={busy || extracting}
+                  onClick={resetForm}
+                >
+                  {formMode === 'draft' ? 'Discard draft' : 'Cancel edit'}
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
+
+        <aside className="activity-panel" aria-label="Recent activity">
+          <h2>Activity</h2>
+          <p className="muted activity-help">
+            What happened recently (no file contents).
+          </p>
+          <div className="activity-scroll">
+            {activity.length === 0 ? (
+              <p className="muted">No activity yet.</p>
+            ) : (
+              <ul className="activity-list">
+                {activity.map((row) => {
+                  const when = formatActivityWhen(row.created_at)
+                  return (
+                    <li key={row.id}>
+                      <div className="activity-when">
+                        <span className="activity-relative">{when.relative}</span>
+                        <span className="activity-absolute">{when.absolute}</span>
+                      </div>
+                      <div className="activity-summary">
+                        {formatActivitySummary(row)}
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+          {canLoadMoreActivity && (
+            <button
+              type="button"
+              className="secondary activity-more"
+              disabled={busy}
+              onClick={() => void loadMoreActivity()}
+            >
+              Load more
+            </button>
+          )}
+        </aside>
+      </div>
 
       <section>
         <h2>All orders</h2>
@@ -314,22 +371,48 @@ function App() {
                   <td>{order.date_of_birth}</td>
                   <td>{order.source_filename ?? '—'}</td>
                   <td className="row">
-                    <button
-                      type="button"
-                      className="secondary"
-                      disabled={busy || pending !== null}
-                      onClick={() => startEdit(order)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="danger"
-                      disabled={busy || pending !== null}
-                      onClick={() => requestDelete(order)}
-                    >
-                      Delete…
-                    </button>
+                    {deleteCandidate?.id === order.id ? (
+                      <>
+                        <button
+                          type="button"
+                          className="danger"
+                          disabled={busy}
+                          onClick={() => void confirmDelete()}
+                        >
+                          Confirm delete
+                        </button>
+                        <button
+                          type="button"
+                          className="secondary"
+                          disabled={busy}
+                          onClick={() => setDeleteCandidate(null)}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className="secondary"
+                          disabled={locked}
+                          onClick={() => startEdit(order)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="danger"
+                          disabled={locked}
+                          onClick={() => {
+                            setError(null)
+                            setDeleteCandidate(order)
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

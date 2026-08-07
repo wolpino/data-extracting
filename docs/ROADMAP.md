@@ -55,6 +55,8 @@ Prioritized after a green public deploy. Aligns with SPEC SHOULD/CUT and [DECISI
 
 Accepted MVP risk: public unauthenticated write + `/extract`. Next hardening is **PR9** (API key + extract rate limit), after tests + UI. Before **real PHI**: auth, durable DB, retention policy, malware scanning — this repo uses fake Buffy data only.
 
+**Note:** The activity / audit log would be stronger with **user names (actor identity)**, but there is **no auth yet** — see DECISIONS (PR8 UI testing adjustments). Revisit when auth/API key lands.
+
 ## Later (after PR10)
 
 - Spec B Order fields: `status`, `notes`, `equipment_type`
@@ -67,4 +69,10 @@ Accepted MVP risk: public unauthenticated write + `/extract`. Next hardening is 
 
 Full auth/RBAC as P0, real PHI program, malware scanning in MVP+, design-system polish, second ORM/LLM client, parallel apps.
 
-Planning prompt: [prompts/post-pr5-planning-agent.md](./prompts/post-pr5-planning-agent.md).
+## Small follow-ups (known bugs)
+
+- DOB `<input type="date">` should disallow dates after today (`max` attribute + API validation).
+- Delete confirm layout: keep **Confirm delete** on the right (Delete’s place); put **Cancel** under **Edit**. Note Cancel-under-Edit may be easy to mis-click; fuller rationale unknown beyond UI testing preference.
+
+Planning prompt: [prompts/post-pr5-planning-agent.md](./prompts/post-pr5-planning-agent.md).  
+**Next (after PR8):** hardening plan prompt — [prompts/plan-pr9-hardening.md](./prompts/plan-pr9-hardening.md) (plan only; get human approval before implementing PR9).

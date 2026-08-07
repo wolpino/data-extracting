@@ -43,10 +43,10 @@ Name tests after invariants (`test_extract_does_not_persist_order`). Prefer stat
 
 ## Explicit non-goals (PR7)
 
-- No Playwright / UI tests (PR8).
+- No Playwright / UI tests (PR8 manual).
 - No load/perf; no prompt snapshot tests.
 - Do not assert Buffy PDF → exact Gemini fields in the default suite.
-- Activity **list endpoint** tests wait for PR8.
+- Activity **list** covered in PR8 (`test_activity_api.py`).
 
 ## Before writing tests
 

@@ -14,6 +14,34 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Extract LLM schema allows “not found” (no forced invent)
+
+- **Decision:** Gemini returns `ExtractCandidate` with `demographics_found` + optional name/DOB fields. API returns a draft only when `demographics_found=true` and all three fields pass placeholder checks; otherwise **422** and the UI must not fill the form. Do not use a required-only draft schema for the LLM (it encouraged hallucinated demographics on unrelated PDFs).
+- **Reasoning:** Regression: non-medical PDFs still got invented first/last/DOB when the response schema required those fields.
+- **Alternatives considered:** Post-filter only (misses plausible invents); always trust the model.
+- **Revisit when:** Citations/page evidence or confidence scores are added.
+
+### 2026-08-07 — PR8 UI functionality testing adjustments
+
+- **Decision:** After human UI testing on PR8: (1) no second confirm modal — extract/create/save use one labeled primary button (`Confirm & save Order` / `Create Order` / `Save changes`); delete uses inline **Confirm delete** / **Cancel** on the row (no `Delete #N?` label). (2) Activity sits in a scrollable aside beside the form with load-more and human-readable summaries + absolute times (naive UTC timestamps parsed as UTC). (3) Incomplete extracts return 422 and do not fill the form; N/A / Unknown placeholders rejected — all three of first name, last name, DOB are mandatory.
+- **Reasoning:** Double-confirm fought the extract review flow; activity needed to be reference-sized and readable; placeholder drafts undermined trust in extract.
+- **Alternatives considered:** Keep modal for all mutations; browser `window.confirm` for delete; leave raw action codes in the activity panel.
+- **Revisit when:** Auth lands — **the audit log would be stronger with user names / actor identity, but there is no auth yet** (accepted MVP cut; track under PR9+ hardening / auth).
+
+### 2026-08-07 — Confirm is the primary button (no double modal)
+
+- **Decision:** Extract/create/save use a clearly labeled primary button (`Confirm & save Order` / `Create Order` / `Save changes`) with no second modal. Delete keeps a single `window.confirm`. Incomplete extracts return 422 and do not populate the form; N/A placeholders are rejected.
+- **Reasoning:** Human check for extract is reviewing fields then confirming once; a modal after “review” was a double confirm. Activity sits beside the form as a scrollable aside with load-more.
+- **Alternatives considered:** Custom modal for all mutations; always show extract placeholders.
+- **Revisit when:** Stronger delete UX (inline undo) if needed. **Superseded/refined by “PR8 UI functionality testing adjustments” above** (inline Confirm delete; readable activity times).
+
+### 2026-08-07 — Confirm UI: modal dialog (PR8)
+
+- **Decision:** Replace top-of-page confirm banner with a modal `alertdialog` focused on Confirm; keep confirm-before-save. Extract results use an explicit draft mode + “Confirm save Order…”.
+- **Reasoning:** Banner was easy to miss and froze the page awkwardly; modal keeps the invariant while making the action obvious.
+- **Alternatives considered:** Inline confirm only in each section; `window.confirm`.
+- **Revisit when:** Further a11y polish (focus trap / Esc) if reviewers need it. **Superseded by “Confirm is the primary button” above.**
+
 ### 2026-08-07 — Demo seed opt-in via SEED_DEMO_DATA
 
 - **Decision:** Startup Buffy Order seed runs only when `SEED_DEMO_DATA=true` (default `false`). Enable in local `.env`; keep false on Render/submission.

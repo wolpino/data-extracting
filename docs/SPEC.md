@@ -119,7 +119,8 @@ See [DECISIONS.md](./DECISIONS.md). Summary:
 - `GET/PUT/PATCH/DELETE /api/v1/orders/{id}`
 - `POST /api/v1/extract` — multipart PDF → draft JSON (not persisted); non-PDF → 400/415
 - `POST /api/v1/orders/confirm` — draft fields (+ optional filename) → Order
-- Activity logging in the service layer for these routes
+- `GET /api/v1/activity` — recent activity rows (metadata only)
+- Activity logging in the service layer for these routes (list activity does not log itself)
 
 ## Work order (do not skip)
 

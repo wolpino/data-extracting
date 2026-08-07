@@ -112,13 +112,14 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 - SQLite on Render free tier is not durable across deploys.
 - PDF-only uploads; no malware scanning.
 - No rate limiting on `/extract` yet (planned PR9).
-- Confirm UI uses a top-of-page banner (works; functionality fix planned PR8).
-- Activity is logged to the DB but not yet shown in the UI (planned PR8).
+- Confirm UI uses a modal dialog (confirm-before-save intact).
 
 ## Known issues
 
-- Confirm banner UX is clunky (placement/focus) — replace with near-action confirm in PR8. See DECISIONS / ROADMAP.
 - Gemini free-tier quota can 429; override model with `GEMINI_MODEL` or raise billing limits.
+- Activity log has no actor/user name yet (no auth in MVP) — see [docs/DECISIONS.md](docs/DECISIONS.md).
+- **DOB date picker** allows selecting dates after today — should set `max` to the current day (and ideally validate server-side). Known bug; fix in a small follow-up.
+- **Delete confirm layout:** Confirm delete currently shifts left when Delete is replaced. Preferred: Confirm delete stays on the right (Delete’s place); Cancel stacks under Edit. Cancel-under-Edit may be easy to mis-click; fuller rationale unknown beyond UI testing preference. Track for small UI follow-up.
 
 ## With more time / short roadmap
 
