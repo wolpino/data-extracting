@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, File, Request, UploadFile, status
 from sqlalchemy.orm import Session
 
 from data_extracting_backend.activity import log_activity
+from data_extracting_backend.auth import require_api_key
 from data_extracting_backend.config import Settings, get_settings
 from data_extracting_backend.db import get_db
 from data_extracting_backend.extract import ExtractDraft, extract_patient_draft
@@ -15,6 +16,7 @@ router = APIRouter(tags=["extract"])
     "/extract",
     response_model=ExtractDraft,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(require_api_key)],
 )
 async def extract_document(
     request: Request,

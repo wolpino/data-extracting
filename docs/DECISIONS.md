@@ -167,3 +167,17 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 - **Reasoning:** Assessment grades a working public MVP; open write endpoints are expected for a demo unless time for a key. Cheap upload/CORS/secret controls prevent easy foot-guns without burning the clock on auth.
 - **Alternatives considered:** Shared API key in MVP; treat rate limiting as MUST before deploy.
 - **Revisit when:** Post-deploy S3 time, or if reviewers require a gated endpoint.
+
+### 2026-08-07 — PR9 extract in-process rate limit
+
+- **Decision:** Rate-limit `POST /api/v1/extract` only with an in-memory sliding window keyed by `request.client.host`. Env: `EXTRACT_RATE_LIMIT_PER_MINUTE` (default 15), `EXTRACT_RATE_LIMIT_ENABLED` (default true). Over-limit → 429 + structured `{error, message}` + `Retry-After`. No Redis/shared store for this take-home.
+- **Reasoning:** Cheap Gemini-quota guard that works on free Render without new infra; IP keying works with or without the parallel API-key slice (key-scoped buckets can layer later).
+- **Alternatives considered:** Redis; limit all writes; require API key before shipping limiter.
+- **Revisit when:** Multi-instance deploy needs a shared store, or API key lands and we want key+IP composite keys.
+
+### 2026-08-07 — PR9 shared demo API key
+
+- **Decision:** Optional `API_KEY` env; when set, require `X-API-Key` on Order writes + `/extract` + confirm. GETs/`/health` stay open. Empty `API_KEY` keeps local open. UI stores the demo key in `sessionStorage` (never `VITE_*`). Shared README value `demo-reviewer-key` for this take-home.
+- **Reasoning:** Blocks casual write/Gemini abuse on the public demo without full auth; reviewers can still browse lists and paste one key.
+- **Alternatives considered:** Lock all routes; bake key into Vite env; require key even when unset locally.
+- **Revisit when:** Real user auth / per-reviewer keys / PHI.

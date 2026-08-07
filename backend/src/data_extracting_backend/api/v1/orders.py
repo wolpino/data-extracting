@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from data_extracting_backend.activity import log_activity
+from data_extracting_backend.auth import require_api_key
 from data_extracting_backend.db import get_db
 from data_extracting_backend.models import Order
 from data_extracting_backend.schemas import (
@@ -23,6 +24,7 @@ router = APIRouter(prefix="/orders", tags=["orders"])
     "/confirm",
     response_model=OrderRead,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_api_key)],
 )
 def confirm_order(
     payload: OrderCreate, request: Request, db: Session = Depends(get_db)
@@ -69,7 +71,12 @@ def list_orders(request: Request, db: Session = Depends(get_db)) -> list[Order]:
     return orders
 
 
-@router.post("", response_model=OrderRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=OrderRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_api_key)],
+)
 def create_order(
     payload: OrderCreate, request: Request, db: Session = Depends(get_db)
 ) -> Order:
@@ -113,7 +120,11 @@ def get_order(
     return order
 
 
-@router.put("/{order_id}", response_model=OrderRead)
+@router.put(
+    "/{order_id}",
+    response_model=OrderRead,
+    dependencies=[Depends(require_api_key)],
+)
 def replace_order(
     order_id: int,
     payload: OrderUpdate,
@@ -142,7 +153,11 @@ def replace_order(
     return order
 
 
-@router.patch("/{order_id}", response_model=OrderRead)
+@router.patch(
+    "/{order_id}",
+    response_model=OrderRead,
+    dependencies=[Depends(require_api_key)],
+)
 def patch_order(
     order_id: int,
     payload: OrderPatch,
@@ -178,7 +193,11 @@ def patch_order(
     return order
 
 
-@router.delete("/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{order_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(require_api_key)],
+)
 def delete_order(
     order_id: int, request: Request, db: Session = Depends(get_db)
 ) -> None:

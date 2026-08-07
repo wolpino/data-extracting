@@ -6,8 +6,10 @@ import {
   createOrder,
   deleteOrder,
   extractDocument,
+  getApiKey,
   listActivity,
   listOrders,
+  setApiKey,
   type Activity,
   type Order,
   type OrderInput,
@@ -57,6 +59,8 @@ function App() {
   const [extracting, setExtracting] = useState(false)
   // Inline delete confirm — Confirm / Cancel buttons on the row (not window.confirm).
   const [deleteCandidate, setDeleteCandidate] = useState<Order | null>(null)
+  // Demo shared key (session only). Required when server API_KEY is set.
+  const [apiKeyInput, setApiKeyInput] = useState(() => getApiKey())
 
   const refreshOrders = useCallback(async () => {
     setOrders(await listOrders())
@@ -201,6 +205,25 @@ function App() {
       <p className="muted">
         API: <code>{apiBaseUrl}</code> — review extracted fields, then{' '}
         <strong>Confirm &amp; save</strong> (or create/save manually).
+      </p>
+
+      <label className="api-key-field">
+        Demo API key
+        <input
+          type="password"
+          autoComplete="off"
+          placeholder="Paste from README when API_KEY is set on the server"
+          value={apiKeyInput}
+          onChange={(e) => {
+            const value = e.target.value
+            setApiKeyInput(value)
+            setApiKey(value)
+          }}
+        />
+      </label>
+      <p className="muted api-key-hint">
+        Stored in sessionStorage only (not baked into the Vite build). Leave
+        blank for local APIs with no <code>API_KEY</code>.
       </p>
 
       {error && (

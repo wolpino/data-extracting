@@ -1,7 +1,37 @@
-/** Thin fetch helpers for /api/v1. No secrets — Gemini key stays server-side. */
+/** Thin fetch helpers for /api/v1. Gemini key stays server-side. */
 
 export const apiBaseUrl =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+
+/** sessionStorage — not VITE_* (build-time env is public in the static bundle). */
+const API_KEY_STORAGE = 'data-extracting-api-key'
+
+export function getApiKey(): string {
+  try {
+    return sessionStorage.getItem(API_KEY_STORAGE) ?? ''
+  } catch {
+    return ''
+  }
+}
+
+export function setApiKey(value: string): void {
+  try {
+    const trimmed = value.trim()
+    if (trimmed) sessionStorage.setItem(API_KEY_STORAGE, trimmed)
+    else sessionStorage.removeItem(API_KEY_STORAGE)
+  } catch {
+    /* private mode / blocked storage */
+  }
+}
+
+function authHeaders(json = false): HeadersInit {
+  const headers: Record<string, string> = {}
+  if (json) headers['Content-Type'] = 'application/json'
+  const key = getApiKey()
+  // Required on Render once API_KEY is set; ignored when server key is unset.
+  if (key) headers['X-API-Key'] = key
+  return headers
+}
 
 export type Order = {
   id: number
@@ -57,6 +87,12 @@ async function readError(response: Response): Promise<string> {
   }
 
   // Map common extract/API failures to clearer copy (status is the signal).
+  if (response.status === 401) {
+    return (
+      detail ||
+      'API key required — paste the demo key from the README (X-API-Key).'
+    )
+  }
   if (response.status === 422) {
     return (
       detail ||
@@ -90,7 +126,7 @@ export async function listOrders(): Promise<Order[]> {
 export async function createOrder(input: OrderInput): Promise<Order> {
   const response = await fetch(`${apiBaseUrl}/api/v1/orders`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(true),
     body: JSON.stringify(input),
   })
   if (!response.ok) throw new Error(await readError(response))
@@ -103,7 +139,7 @@ export async function updateOrder(
 ): Promise<Order> {
   const response = await fetch(`${apiBaseUrl}/api/v1/orders/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(true),
     body: JSON.stringify(input),
   })
   if (!response.ok) throw new Error(await readError(response))
@@ -113,6 +149,7 @@ export async function updateOrder(
 export async function deleteOrder(id: number): Promise<void> {
   const response = await fetch(`${apiBaseUrl}/api/v1/orders/${id}`, {
     method: 'DELETE',
+    headers: authHeaders(),
   })
   if (!response.ok) throw new Error(await readError(response))
 }
@@ -123,6 +160,7 @@ export async function extractDocument(file: File): Promise<ExtractDraft> {
   body.append('file', file)
   const response = await fetch(`${apiBaseUrl}/api/v1/extract`, {
     method: 'POST',
+    headers: authHeaders(),
     body,
   })
   if (!response.ok) throw new Error(await readError(response))
@@ -133,7 +171,7 @@ export async function extractDocument(file: File): Promise<ExtractDraft> {
 export async function confirmOrder(input: OrderInput): Promise<Order> {
   const response = await fetch(`${apiBaseUrl}/api/v1/orders/confirm`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(true),
     body: JSON.stringify(input),
   })
   if (!response.ok) throw new Error(await readError(response))

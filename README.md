@@ -17,10 +17,11 @@ Secrets (`GEMINI_API_KEY`, etc.) live only in Render env / local `backend/.env` 
 
 ## For reviewers
 
-- **Happy path:** open the [UI](https://data-extracting-ui.onrender.com) → upload a PDF from [docs/testdata/](docs/testdata/) → edit the draft fields if needed → **Confirm** to save → list/edit/delete Orders (each mutation asks for Confirm).
+- **Happy path:** open the [UI](https://data-extracting-ui.onrender.com) → paste the **demo API key** (below) into the UI field if the server has `API_KEY` set → upload a PDF from [docs/testdata/](docs/testdata/) → edit the draft fields if needed → **Confirm** to save → list/edit/delete Orders (each mutation asks for Confirm).
+- **Demo API key:** when the API has `API_KEY` configured, writes and `/extract` require header `X-API-Key` (same value). Paste it into the UI “Demo API key” field (stored in `sessionStorage` only — **not** a `VITE_*` build secret). Suggested shared value for this take-home: `demo-reviewer-key` (set the same string as `API_KEY` on Render).
 - **Confirm-before-save:** `POST /extract` returns a draft only; Orders persist only after confirm (API + UI).
 - **Fake data only:** Buffy-themed names/fixtures — not real PHI. Expected fields for the small charts are listed in [docs/testdata/README.md](docs/testdata/README.md).
-- **Unauthenticated public API:** anyone with the URL can read/write and call `/extract` (Gemini cost/quota risk). Accepted for this take-home; harden before real PHI.
+- **API access:** `GET` list/activity/health stay open for browsing. Mutating Orders + `/extract` require the demo key when `API_KEY` is set. Still not full auth — harden further before real PHI.
 - **SQLite on Render free tier** is ephemeral across deploys (Orders may reset after redeploy).
 - Decisions and tradeoffs: [docs/DECISIONS.md](docs/DECISIONS.md). Post-MVP sequence: [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -49,7 +50,7 @@ Browser (Vite React TS)
 | LLM | Gemini (`GEMINI_MODEL`, default `gemini-3.6-flash`), key server-side only |
 | DB | SQLite via SQLAlchemy; `DATABASE_URL` swap-ready for Postgres |
 | Deploy | Render Web Service (`backend/`) + Static Site (`frontend/dist`) |
-| Auth | None in MVP (accepted take-home risk) |
+| Auth | Shared demo `API_KEY` on writes + `/extract` (`X-API-Key`); GETs open |
 
 Confirm-before-save: `POST /api/v1/extract` returns a **draft only**; Orders persist only via `POST /api/v1/orders/confirm` (or manual CRUD with UI confirm dialogs).
 
@@ -98,20 +99,21 @@ Blueprint: [render.yaml](render.yaml) (Web Service + Static Site). Deploy from b
 1. **API** — root `backend/` (must include `uv.lock`)  
    - Build: `uv sync --frozen`  
    - Start: `uv run uvicorn data_extracting_backend.main:app --host 0.0.0.0 --port $PORT`  
-   - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS=https://data-extracting-ui.onrender.com`, optional `MAX_UPLOAD_BYTES`
+   - Env: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`, `DATABASE_URL=sqlite:///./app.db`, `CORS_ORIGINS=https://data-extracting-ui.onrender.com`, optional `MAX_UPLOAD_BYTES`, **`API_KEY`** (shared demo key — match README), optional extract rate-limit vars
 2. **UI** — root `frontend/`  
    - Build: `npm ci && npm run build`  
    - Publish: `dist`  
-   - Env (build-time): `VITE_API_BASE_URL=https://data-extracting-api.onrender.com`
+   - Env (build-time): `VITE_API_BASE_URL=https://data-extracting-api.onrender.com`  
+   - Do **not** set the demo key as `VITE_*` — reviewers paste it in the UI (sessionStorage).
 
 Free-tier note: SQLite lives on the instance filesystem and is **ephemeral across deploys** unless you attach a disk or move to Postgres.
 
 ## Limitations
 
-- **Unauthenticated public API** — anyone with the URL can read/write Orders and call `/extract` (Gemini cost/quota risk). Accepted for this take-home; gate with auth/API key before real PHI.
+- **Shared demo API key (not full auth)** — when `API_KEY` is set on the server, writes + `/extract` require `X-API-Key`. GETs stay open. The demo key is intentional for reviewers (README + UI paste); do not treat as production auth or put it in `VITE_*`.
 - SQLite on Render free tier is not durable across deploys.
 - PDF-only uploads; no malware scanning.
-- No rate limiting on `/extract` yet (planned PR9).
+- Extract rate limiting is on sibling branch `feature/pr9-extract-rate-limit` (merge into PR9).
 - Confirm UI uses a modal dialog (confirm-before-save intact).
 
 ## Known issues

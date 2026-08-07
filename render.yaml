@@ -23,10 +23,18 @@ services:
       # Submission/demo: do not seed Buffy Order on the public instance.
       - key: SEED_DEMO_DATA
         value: "false"
+      # Per-instance in-memory /extract limit (not shared across multiple instances).
+      - key: EXTRACT_RATE_LIMIT_ENABLED
+        value: "true"
+      - key: EXTRACT_RATE_LIMIT_PER_MINUTE
+        value: "15"
       # Dashboard-only secrets / cross-service URLs (do not commit real values).
       - key: GEMINI_API_KEY
         sync: false
       - key: CORS_ORIGINS
+        sync: false
+      # Shared demo key for writes + /extract. Set to demo-reviewer-key (match README).
+      - key: API_KEY
         sync: false
 
   - type: web

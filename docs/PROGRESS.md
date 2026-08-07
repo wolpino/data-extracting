@@ -4,19 +4,22 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR8 — UI functionality
-- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/10
-- **Branch:** `feature/pr8-ui-functionality`
+- **Phase:** PR9 — Hardening (API-key slice)
+- **Status:** `ready_for_review` (API-key slice; stash restored after collision)
+- **Branch:** `feature/pr9-api-key`
+- **Sibling:** rate-limit on `feature/pr9-extract-rate-limit` (stash@{0} holds local rate-limit dirt if needed)
+
 ## Done
 
-- [x] PR0–PR7 merged (PR7: https://github.com/wolpino/data-extracting/pull/9)
+- [x] PR0–PR8 merged (PR8: https://github.com/wolpino/data-extracting/pull/10)
 - [x] Public deploy live; pytest suite; opt-in seed
-- [x] PR8: confirm modal, draft mode, activity API+panel, extract feedback
+- [x] PR9 API-key: `API_KEY` + `X-API-Key` on writes/extract; UI sessionStorage; README demo key `demo-reviewer-key`
 
 ## Next
 
-- Human reviews PR8
-- On go-ahead: PR9 hardening (API key + extract rate limit)
+- Human: set `API_KEY=demo-reviewer-key` on Render **after** UI with key field is deployed
+- Merge with rate-limit sibling
+- Do not start PR10 until human says so
 
 ## Blockers
 
