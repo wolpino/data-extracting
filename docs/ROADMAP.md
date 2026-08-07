@@ -53,9 +53,9 @@ Prioritized after a green public deploy. Aligns with SPEC SHOULD/CUT and [DECISI
 
 ## Security track
 
-Accepted MVP risk: public unauthenticated write + `/extract`. Next hardening is **PR9** (API key + extract rate limit), after tests + UI. Before **real PHI**: auth, durable DB, retention policy, malware scanning — this repo uses fake Buffy data only.
+MVP risk (open write + `/extract`) is mitigated for the demo by **PR9**: shared `API_KEY` on writes/extract + in-process `/extract` rate limit. Before **real PHI**: full auth, durable DB (PR10), retention policy, malware scanning — this repo uses fake Buffy data only.
 
-**Note:** The activity / audit log would be stronger with **user names (actor identity)**, but there is **no auth yet** — see DECISIONS (PR8 UI testing adjustments). Revisit when auth/API key lands.
+**Note:** The activity / audit log would be stronger with **user names (actor identity)**. Shared API key is not a user; revisit when real auth lands — see DECISIONS.
 
 ## Later (after PR10)
 
@@ -75,4 +75,4 @@ Full auth/RBAC as P0, real PHI program, malware scanning in MVP+, design-system 
 - Delete confirm layout: keep **Confirm delete** on the right (Delete’s place); put **Cancel** under **Edit**. Note Cancel-under-Edit may be easy to mis-click; fuller rationale unknown beyond UI testing preference.
 
 Planning prompt: [prompts/post-pr5-planning-agent.md](./prompts/post-pr5-planning-agent.md).  
-**Next (after PR8):** hardening plan prompt — [prompts/plan-pr9-hardening.md](./prompts/plan-pr9-hardening.md) (plan only; get human approval before implementing PR9).
+**Next (after PR9):** PR10 Postgres + Alembic — wait for human go-ahead (do not start from the old PR9 planning prompt).
