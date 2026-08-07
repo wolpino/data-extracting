@@ -321,7 +321,7 @@ Add Gemini PDF extract (draft-only) and `/orders/confirm`, wire thin UI upload â
 
 - **Status:** `in_progress`
 - **Branch:** `deploy/pr5-render-readme`
-- **GitHub:** _(set when opened)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/7
 - **Started:** 2026-08-07
 - **Depends on:** PR4 merged/approved (or minimal API+extract path live)
 
