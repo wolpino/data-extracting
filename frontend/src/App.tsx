@@ -373,9 +373,6 @@ function App() {
                   <td className="row">
                     {deleteCandidate?.id === order.id ? (
                       <>
-                        <span className="delete-prompt">
-                          Delete #{order.id}?
-                        </span>
                         <button
                           type="button"
                           className="danger"
