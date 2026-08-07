@@ -89,5 +89,19 @@ class OrderRead(BaseModel):
     updated_at: datetime
 
 
+class ActivityRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    action: str
+    entity_type: str
+    entity_id: int | None
+    method: str | None
+    path: str | None
+    # Short metadata only — never PDF bytes.
+    detail: str | None
+    created_at: datetime
+
+
 class ErrorResponse(BaseModel):
     detail: str

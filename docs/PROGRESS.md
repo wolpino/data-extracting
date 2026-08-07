@@ -4,19 +4,20 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR7 — Written automated tests
-- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/9
-- **Branch:** `test/pr7-written-tests`
+- **Phase:** PR8 — UI functionality
+- **Status:** `ready_for_review` — branch `feature/pr8-ui-functionality`
+- **GitHub:** _(set when opened)_
+
 ## Done
 
-- [x] PR0–PR6 merged (PR6: https://github.com/wolpino/data-extracting/pull/8)
-- [x] Public deploy live
-- [x] `docs/TESTING.md` + pytest suite (mock Gemini); `SEED_DEMO_DATA` opt-in
+- [x] PR0–PR7 merged (PR7: https://github.com/wolpino/data-extracting/pull/9)
+- [x] Public deploy live; pytest suite; opt-in seed
+- [x] PR8: confirm modal, draft mode, activity API+panel, extract feedback
 
 ## Next
 
-- Human reviews PR7
-- On go-ahead: PR8 UI functionality
+- Human reviews PR8
+- On go-ahead: PR9 hardening (API key + extract rate limit)
 
 ## Blockers
 
@@ -24,6 +25,4 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Known issues
 
-- Confirm banner at top of page is not user-friendly — PR8 near-action confirm. See DECISIONS / ROADMAP.
-- Activity logged but not shown in UI — PR8.
-- Ensure Render has `SEED_DEMO_DATA=false` (or unset) after this merges.
+- None blocking demo path; Gemini quota 429s remain possible on free tier.

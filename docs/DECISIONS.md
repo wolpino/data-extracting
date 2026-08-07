@@ -14,6 +14,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Confirm UI: modal dialog (PR8)
+
+- **Decision:** Replace top-of-page confirm banner with a modal `alertdialog` focused on Confirm; keep confirm-before-save. Extract results use an explicit draft mode + “Confirm save Order…”.
+- **Reasoning:** Banner was easy to miss and froze the page awkwardly; modal keeps the invariant while making the action obvious.
+- **Alternatives considered:** Inline confirm only in each section; `window.confirm`.
+- **Revisit when:** Further a11y polish (focus trap / Esc) if reviewers need it.
+
 ### 2026-08-07 — Demo seed opt-in via SEED_DEMO_DATA
 
 - **Decision:** Startup Buffy Order seed runs only when `SEED_DEMO_DATA=true` (default `false`). Enable in local `.env`; keep false on Render/submission.

@@ -30,8 +30,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `merged` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `merged` |
 | [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `merged` |
-| [PR7](#pr7--written-automated-tests) | Written automated tests | `ready_for_review` |
-| [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `planned` |
+| [PR7](#pr7--written-automated-tests) | Written automated tests | `merged` |
+| [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `ready_for_review` |
 | [PR9](#pr9--hardening) | API key + extract rate limit | `planned` |
 | [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
 
@@ -414,11 +414,12 @@ Ship reviewer-facing README (live URLs + manual checklist), expand post-MVP ROAD
 
 ## PR7 — Written automated tests
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `test/pr7-written-tests`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/9
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR6 merged/approved
 
 ### Scope
@@ -457,9 +458,10 @@ Add pytest suite per TESTING.md, gate Buffy startup seed behind `SEED_DEMO_DATA`
 
 ## PR8 — UI functionality
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
+- **Status:** `ready_for_review`
+- **Branch:** `feature/pr8-ui-functionality`
 - **GitHub:** _(set when opened)_
+- **Started:** 2026-08-07
 - **Depends on:** PR7 merged/approved
 
 ### Scope
@@ -472,28 +474,29 @@ Add pytest suite per TESTING.md, gate Buffy startup seed behind `SEED_DEMO_DATA`
 
 ### Acceptance criteria
 
-- [ ] Confirm dialog appears near the initiating action; Cancel/Confirm work
-- [ ] After PDF extract, draft state is obvious; primary CTA saves Order only after confirm
-- [ ] Activity list visible in UI (metadata only; no PDF bytes)
-- [ ] Extract shows clear progress/error states
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause
+- [x] Confirm dialog appears near the initiating action; Cancel/Confirm work
+- [x] After PDF extract, draft state is obvious; primary CTA saves Order only after confirm
+- [x] Activity list visible in UI (metadata only; no PDF bytes)
+- [x] Extract shows clear progress/error states
+- [x] Living PR log + PROGRESS updated; GitHub PR opened; pause
 
 ### Summary
 
-_(fill on finish)_
+Replace top confirm banner with a modal, mark extract results as unsaved drafts, add `GET /api/v1/activity` + UI panel, and clarify extract progress/errors — without visual polish scope creep.
 
 ### Test plan
 
-- [ ] Manual: upload Buffy PDF → edit → confirm via new UI
+- [x] `cd backend && uv run pytest` (includes activity API)
+- [x] `cd frontend && npm run build`
+- [ ] Manual: upload Buffy PDF → edit draft → confirm via modal
 - [ ] Manual: create/edit/delete confirms
 - [ ] Manual: activity rows appear after actions
-- [ ] Automated: activity list endpoint covered
-- [ ] `npm run build`
 
 ### Notes / risks
 
 - Not visual polish / design system.
 - Confirm-before-save invariant must remain.
+- `GET /activity` does not write activity (avoids feedback loops).
 
 ---
 
