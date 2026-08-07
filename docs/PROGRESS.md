@@ -5,7 +5,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR3 — Thin UI + CORS
-- **Status:** Opening GitHub PR — **do not start PR4 until approved**
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/5 — **do not start PR4 until approved**
 
 ## Done
 

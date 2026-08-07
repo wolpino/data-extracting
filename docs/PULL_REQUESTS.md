@@ -224,7 +224,7 @@ Catch up concise comments on the current codebase and lock an agent mandate so l
 
 - **Status:** `ready_for_review`
 - **Branch:** `feature/pr3-ui-cors`
-- **GitHub:** _(filled after open)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/5
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
 - **Depends on:** PR2b merged/approved
@@ -244,7 +244,7 @@ Catch up concise comments on the current codebase and lock an agent mandate so l
 - [x] CORS allows configured Vite origin; disallowed origins fail as expected
 - [x] `CORS_ORIGINS` documented in `.env.example`
 - [x] UI remains thin (no design-system chase)
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+- [x] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
 
 ### Summary
 
