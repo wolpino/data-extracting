@@ -119,6 +119,7 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 - Gemini free-tier quota can 429; override model with `GEMINI_MODEL` or raise billing limits.
 - Activity log has no actor/user name yet (no auth in MVP) — see [docs/DECISIONS.md](docs/DECISIONS.md).
 - **DOB date picker** allows selecting dates after today — should set `max` to the current day (and ideally validate server-side). Known bug; fix in a small follow-up.
+- **Delete confirm layout:** Confirm delete stays on the right (Delete’s place); Cancel stacks under Edit. Putting Cancel under Edit can make it easy to mis-click Cancel when aiming for Edit — intentional layout preference from UI testing; rationale for Cancel-under-Edit vs other placements is otherwise unknown. See DECISIONS.
 
 ## With more time / short roadmap
 

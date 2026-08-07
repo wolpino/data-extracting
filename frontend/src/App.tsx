@@ -370,17 +370,17 @@ function App() {
                   </td>
                   <td>{order.date_of_birth}</td>
                   <td>{order.source_filename ?? '—'}</td>
-                  <td className="row">
-                    {deleteCandidate?.id === order.id ? (
-                      <>
-                        <button
-                          type="button"
-                          className="danger"
-                          disabled={busy}
-                          onClick={() => void confirmDelete()}
-                        >
-                          Confirm delete
-                        </button>
+                  <td className="order-actions">
+                    <div className="order-actions-left">
+                      <button
+                        type="button"
+                        className="secondary"
+                        disabled={locked && deleteCandidate?.id !== order.id}
+                        onClick={() => startEdit(order)}
+                      >
+                        Edit
+                      </button>
+                      {deleteCandidate?.id === order.id && (
                         <button
                           type="button"
                           className="secondary"
@@ -389,17 +389,19 @@ function App() {
                         >
                           Cancel
                         </button>
-                      </>
-                    ) : (
-                      <>
+                      )}
+                    </div>
+                    <div className="order-actions-right">
+                      {deleteCandidate?.id === order.id ? (
                         <button
                           type="button"
-                          className="secondary"
-                          disabled={locked}
-                          onClick={() => startEdit(order)}
+                          className="danger"
+                          disabled={busy}
+                          onClick={() => void confirmDelete()}
                         >
-                          Edit
+                          Confirm delete
                         </button>
+                      ) : (
                         <button
                           type="button"
                           className="danger"
@@ -411,8 +413,8 @@ function App() {
                         >
                           Delete
                         </button>
-                      </>
-                    )}
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -14,6 +14,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Delete confirm: Confirm stays right; Cancel under Edit
+
+- **Decision:** On delete confirm, **Confirm delete** stays in the right-hand Delete slot (does not shift left). **Cancel** appears under **Edit**. Edit remains visible.
+- **Reasoning:** UI testing — Confirm must not jump left (mis-click risk on the destructive action’s previous position). Cancel-under-Edit was requested; note that Cancel under Edit can also be easy to hit accidentally when targeting Edit. Fuller rationale for that Cancel placement is unknown beyond the testing preference.
+- **Alternatives considered:** Confirm+Cancel both replacing Edit/Delete in one row; modal; Cancel to the right of Confirm.
+- **Revisit when:** Accidental Cancel/Edit mis-clicks become a real complaint.
+
 ### 2026-08-07 — Extract LLM schema allows “not found” (no forced invent)
 
 - **Decision:** Gemini returns `ExtractCandidate` with `demographics_found` + optional name/DOB fields. API returns a draft only when `demographics_found=true` and all three fields pass placeholder checks; otherwise **422** and the UI must not fill the form. Do not use a required-only draft schema for the LLM (it encouraged hallucinated demographics on unrelated PDFs).
