@@ -4,22 +4,21 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR9 — Hardening (rate-limit slice)
-- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/12
-- **Branch:** `feature/pr9-extract-rate-limit`
-- **API-key:** merged (#11)
+- **Phase:** PR9 — Hardening
+- **Status:** `merged` (#11 API key + #12 rate limit)
+- **Next gate:** PR10 (Postgres + Alembic) — wait for human go-ahead
 
 ## Done
 
 - [x] PR0–PR8 merged (PR8: https://github.com/wolpino/data-extracting/pull/10)
 - [x] Public deploy live; pytest suite; opt-in seed
-- [x] PR9 API-key merged (#11)
-- [x] PR9 rate-limit PR opened (#12)
+- [x] PR9 API key: https://github.com/wolpino/data-extracting/pull/11
+- [x] PR9 extract rate limit: https://github.com/wolpino/data-extracting/pull/12
 
 ## Next
 
-- Human reviews/merges #12
-- After UI deploy: set Render `API_KEY=demo-reviewer-key` (if not already)
+- After UI deploy: set Render `API_KEY=demo-reviewer-key` (if not already) and smoke keyed extract
+- On human go-ahead: PR10 Postgres + Alembic
 - Do not start PR10 until human says so
 
 ## Blockers

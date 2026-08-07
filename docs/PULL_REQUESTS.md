@@ -31,8 +31,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR5](#pr5--deploy--readme) | Deploy + README | `merged` |
 | [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `merged` |
 | [PR7](#pr7--written-automated-tests) | Written automated tests | `merged` |
-| [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `ready_for_review` |
-| [PR9](#pr9--hardening) | API key + extract rate limit | `ready_for_review` |
+| [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `merged` |
+| [PR9](#pr9--hardening) | API key + extract rate limit | `merged` |
 | [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
 
 ---
@@ -458,11 +458,12 @@ Add pytest suite per TESTING.md, gate Buffy startup seed behind `SEED_DEMO_DATA`
 
 ## PR8 — UI functionality
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `feature/pr8-ui-functionality`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/10
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR7 merged/approved
 
 ### Scope
@@ -505,17 +506,18 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 
 ## PR9 — Hardening
 
-- **Status:** `ready_for_review` (API key merged #11; rate-limit #12)
-- **Branch:** `feature/pr9-extract-rate-limit`
-- **GitHub:** https://github.com/wolpino/data-extracting/pull/12 (API key was #11, merged)
+- **Status:** `merged`
+- **Branch:** `feature/pr9-api-key` + `feature/pr9-extract-rate-limit`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/11 (API key), https://github.com/wolpino/data-extracting/pull/12 (rate limit)
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR8 merged/approved
 
 ### Scope
 
-- Shared API key on write + `/extract` + confirm (`X-API-Key` / `API_KEY`) — **API-key slice (#11)**
-- Rate limit `/extract` — **this slice** (`feature/pr9-extract-rate-limit`, rebased onto API key)
+- Shared API key on write + `/extract` + confirm (`X-API-Key` / `API_KEY`) — **#11**
+- Rate limit `/extract` — **#12**
 - Document client header / UI sessionStorage wiring (not `VITE_*`)
 
 ### Acceptance criteria
@@ -542,7 +544,8 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 
 - [x] `test_api_key.py`: 401 without key / 201 with key / open when unset; extract gated
 - [x] Rate-limit: low limit → 429; under limit → 200; `uv run pytest` without `GEMINI_API_KEY`
-- [ ] Manual: set Render `API_KEY=demo-reviewer-key`, paste in UI, happy path
+- [x] Local manual: `EXTRACT_RATE_LIMIT_PER_MINUTE=1` → first extract 200, second 429 + `Retry-After`
+- [ ] Manual prod: set Render `API_KEY=demo-reviewer-key`, paste in UI, happy path
 - [ ] `API_KEY=demo-reviewer-key ./backend/scripts/smoke_orders.sh` against keyed server
 
 ### Notes / risks
@@ -550,7 +553,7 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 - Set Render `API_KEY` only after UI with sessionStorage field is deployed.
 - Demo key in README is intentional (shared take-home), not production secrecy.
 - In-memory limit is **per process / Render instance** — not shared across multiple instances.
-- API key #11 merged to main; this PR is the remaining rate-limit slice.
+- Shipped as two PRs (#11 then #12) to keep parallel slices mergeable.
 
 
 ## PR10 — Postgres + Alembic
