@@ -1,0 +1,14 @@
+---
+description: Thin Vite React TS UI conventions for this assessment
+globs: frontend/**/*
+alwaysApply: false
+---
+
+# Frontend
+
+- **Vite + React + TypeScript**. Keep UI thin and functional — no design system chase.
+- Wire to backend `/api/v1`. Configure API base URL via env (`VITE_API_BASE_URL`).
+- Required flows: upload PDF → show/edit draft → **Confirm** to save; Order list; edit/delete with **confirm dialogs** (no silent saves).
+- Do not call Gemini from the browser. Do not store secrets in the frontend.
+- CORS is a backend concern; frontend must use the deployed API origin in production.
+- Official ref: https://vitejs.dev/guide/

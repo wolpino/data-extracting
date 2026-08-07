@@ -1,0 +1,20 @@
+---
+description: GenHealth take-home process, priorities, and anti-duplication
+alwaysApply: true
+---
+
+# GenHealth assessment
+
+- Follow [docs/SPEC.md](docs/SPEC.md), [AGENTS.md](AGENTS.md), [docs/PROGRESS.md](docs/PROGRESS.md), [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md).
+- **Mandate:** update `docs/PULL_REQUESTS.md` when a PR starts or finishes. Skipping is a process failure.
+- Work order only: scaffold → CRUD → UI+CORS → extract → confirm → deploy → README.
+- Pause after each PR/checkpoint; do not start the next PR until the human says so.
+- Ask when unclear; do not invent requirements. Log decisions in `docs/DECISIONS.md`.
+- Prefer official docs (uv, FastAPI, Vite, Render, Gemini) over assumptions.
+- MUST before SHOULD. S3 (rate limit/cache/batch/async) only after public deploy.
+- Stuck >10m on SHOULD → Known issues + next MUST.
+- No second scaffold, ORM, LLM client, or parallel app. Extend the monorepo.
+- Extract returns drafts only; Orders persist only after confirm. UI confirms all saves/deletes.
+- Security MVP: secrets in env; Gemini server-side; CORS allowlist; PDF-only + upload size limit; sanitize filenames; no secrets/stack in client errors; no PDF bytes in activity logs. Auth out of MVP.
+- Demo data: Buffy names, fake only; any PDF accepted in MVP (not other MIME types).
+- PRs: Summary, Test plan, Notes/risks (+ mirror in PULL_REQUESTS). Mid-checkpoint if approaching ~20 files.

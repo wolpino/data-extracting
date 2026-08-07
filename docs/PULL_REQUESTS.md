@@ -1,0 +1,290 @@
+# Pull requests (living log)
+
+**Mandate:** Any agent working this repo **must** update this file when a PR **starts** or **finishes**. Skipping the log is a **process failure**, not optional polish.
+
+All planned PRs are listed below with **acceptance criteria** up front. Agents update status, branch, GitHub link, Summary / Test plan / Notes-risks as work progresses — do not delete planned sections.
+
+Also update [PROGRESS.md](./PROGRESS.md) each session. GitHub PR bodies still need Summary / Test plan / Notes-risks (mirror from here).
+
+## How to update
+
+| Event | Required updates |
+|-------|------------------|
+| **Start** | Status → `in_progress`; set branch + started date; leave AC checkboxes for the implementer |
+| **Finish / PR opened** | Status → `ready_for_review`; fill GitHub URL, Summary, Test plan, Notes/risks; tick AC that are met |
+| **Merged** | Status → `merged` |
+
+Statuses: `planned` | `in_progress` | `ready_for_review` | `merged` | `closed`
+
+If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with its own AC, and pause at the midpoint.
+
+## Index
+
+| PR | Title | Status |
+|----|-------|--------|
+| [PR0](#pr0--spec-decisions-agent-process) | Spec, decisions, agent process | `ready_for_review` |
+| [PR1](#pr1--scaffold) | Backend + frontend scaffold | `planned` |
+| [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `planned` |
+| [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `planned` |
+| [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `planned` |
+| [PR5](#pr5--deploy--readme) | Deploy + README | `planned` |
+
+---
+
+## PR0 — Spec, decisions, agent process
+
+- **Status:** `ready_for_review`
+- **Branch:** `docs/pr0-spec-process`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/1
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
+
+### Scope
+
+- Living SPEC, DECISIONS, PROGRESS, PULL_REQUESTS (all planned PRs + AC)
+- AGENTS.md + Cursor rules (including PR-log mandate)
+- Security baseline (MVP vs later) documented in SPEC/DECISIONS
+- Assessment prompt + sample testdata under `docs/`
+- Root `.gitignore`
+
+### Acceptance criteria
+
+- [x] `docs/SPEC.md` has demo sentence, MUST/SHOULD/CUT, security MVP vs later, API surface, work order
+- [x] `docs/DECISIONS.md` seeded with locked decisions + reasoning
+- [x] `docs/PROGRESS.md` tracks current gate
+- [x] `docs/PULL_REQUESTS.md` lists **all** planned PRs with acceptance criteria + update mandate
+- [x] `AGENTS.md` + always-on Cursor rule mandate living PR log and no-skip work order
+- [x] Backend/frontend Cursor rules exist for stack conventions
+- [x] No secrets or `.env` committed; `.gitignore` covers env/venv/node_modules/db
+- [x] GitHub PR opened for human review
+- [ ] Human approves before PR1 starts
+
+### Summary
+
+Establish product/process source of truth before scaffolding so agents do not duplicate work or skip MUST order. Documents locked stack, confirm-before-save, SHOULD tiers, security minimums, and the full PR plan with AC.
+
+### Test plan
+
+- [ ] SPEC matches approved demo sentence and MUST/SHOULD/CUT
+- [ ] PR-log mandate appears in AGENTS.md and `.cursor/rules/genhealth-assessment.mdc`
+- [ ] Index above lists PR0–PR5 with AC
+- [ ] No secrets in the tree
+
+### Notes / risks
+
+- Public unauthenticated API is an accepted take-home risk; call out at deploy/README.
+- Sample PDF is fake demo data (~2MB), not real PHI.
+- Do not start PR1 until human says go.
+
+---
+
+## PR1 — Scaffold
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR0 approved
+
+### Scope
+
+- `backend/` via uv + FastAPI; `GET /health` (optional `/api/v1/health`)
+- `frontend/` via Vite + React + TypeScript; placeholder page only (no Order UI)
+- Root `.env.example` (`DATABASE_URL`, `GEMINI_API_KEY`, `CORS_ORIGINS`, `VITE_API_BASE_URL`)
+- Settings stub; minimal run instructions (root or package README stubs)
+- Deps ready for later: sqlalchemy, pydantic-settings (Gemini client deferred to PR4)
+
+### Acceptance criteria
+
+- [ ] `backend/` installs with uv; `uvicorn` serves health **200**
+- [ ] `frontend/` installs and `npm run dev` loads placeholder UI
+- [ ] `.env.example` present with placeholders only (no real secrets)
+- [ ] Env-driven settings stub exists on backend; frontend can read `VITE_API_BASE_URL`
+- [ ] `.gitignore` still excludes `.env`, venvs, `node_modules`, `dist`, `*.db`
+- [ ] No Order CRUD, extract, or Gemini code yet
+- [ ] `docs/PULL_REQUESTS.md` + `docs/PROGRESS.md` updated; GitHub PR opened; pause for review
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] `uv run` health endpoint locally
+- [ ] Frontend dev server loads
+- [ ] Grep/diff shows no committed secrets
+
+### Notes / risks
+
+_(fill on finish)_
+
+---
+
+## PR2 — Order CRUD + activity log
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR1 merged/approved
+
+### Scope
+
+- SQLAlchemy + SQLite via `DATABASE_URL`; `create_all` on startup
+- Minimal Order model + Pydantic schemas; full CRUD under `/api/v1/orders`
+- Activity log model + writes on demo routes (metadata only; never PDF bytes)
+- Filename sanitization for `source_filename` when provided
+- Optional tiny Buffy seed for local smoke
+
+### Acceptance criteria
+
+- [ ] Order fields: `id`, `first_name`, `last_name`, `date_of_birth`, optional `source_filename`, timestamps
+- [ ] `GET/POST /api/v1/orders` and `GET/PUT/PATCH/DELETE /api/v1/orders/{id}` work with Pydantic validation
+- [ ] Invalid payloads return clear 4xx (structured errors preferred)
+- [ ] Activity rows recorded for list/get/create/update/delete (action, entity, timestamp, request metadata)
+- [ ] Activity log does **not** store file/PDF bytes
+- [ ] `source_filename` sanitized (basename only; path segments rejected)
+- [ ] DB created via SQLAlchemy `create_all`; default SQLite works locally
+- [ ] OpenAPI/curl smoke of full CRUD succeeds
+- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Create/read/update/delete Order via API docs or curl
+- [ ] Confirm activity rows in DB after mutations
+- [ ] Reject invalid DOB / missing required fields
+
+### Notes / risks
+
+_(fill on finish)_
+
+---
+
+## PR3 — Thin UI + CORS
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR2 merged/approved
+
+### Scope
+
+- Backend CORS middleware from `CORS_ORIGINS` allowlist (not `*` for production intent)
+- Thin React UI: Order list, create, edit, delete
+- **Confirm dialogs** before create/update/delete (no silent saves)
+- Simple error display; **no** upload/extract UI yet
+
+### Acceptance criteria
+
+- [ ] Browser UI lists Orders from API
+- [ ] Create and edit require explicit Confirm before calling API
+- [ ] Delete requires confirm dialog
+- [ ] CORS allows configured Vite origin; disallowed origins fail as expected
+- [ ] `CORS_ORIGINS` documented in `.env.example`
+- [ ] UI remains thin (no design-system chase)
+- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Local UI ↔ local API CRUD with confirms
+- [ ] Attempt save without confirm is impossible in UI
+- [ ] CORS smoke from frontend origin
+
+### Notes / risks
+
+_(fill on finish)_
+
+---
+
+## PR4 — Gemini extract + confirm
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR3 merged/approved
+- **Split rule:** If change set approaches ~20 files, ship **PR4a** (API) then **PR4b** (UI) with separate sections/AC and a midpoint pause
+
+### Scope
+
+- Extract service: `bytes + content_type → draft` (PDF-only branch in MVP)
+- `POST /api/v1/extract` → draft JSON; **does not** persist Order
+- `POST /api/v1/orders/confirm` → creates Order + activity
+- Gemini server-side only; LLM error handling (timeouts/empty/non-PDF)
+- Upload max size limit; PDF type/extension validation
+- UI: upload PDF → editable draft → Confirm → refresh list
+
+### Acceptance criteria
+
+- [ ] `POST /extract` accepts PDF and returns `{first_name, last_name, date_of_birth}` draft
+- [ ] Non-PDF rejected with 400/415; oversize rejected with clear error
+- [ ] Extract alone creates **zero** Order rows
+- [ ] `POST /orders/confirm` persists Order after human-approved fields (+ optional sanitized filename)
+- [ ] Gemini API key used only on server; not present in frontend bundle/env for browser
+- [ ] LLM/network failures return structured errors (no secret leakage)
+- [ ] UI supports upload → edit draft → Confirm; list updates after confirm
+- [ ] Works against sample PDF in `docs/testdata/`; prompt is generic (unseen-PDF ready)
+- [ ] Activity logged for extract attempt and confirm (metadata only)
+- [ ] If split: PR4a and PR4b each meet their subset of AC and each pause for review
+- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Extract sample PDF; verify draft fields
+- [ ] Confirm creates Order; re-extract without confirm does not
+- [ ] Reject `.txt` / oversize upload
+- [ ] UI confirm path end-to-end locally
+
+### Notes / risks
+
+_(fill on finish)_
+
+---
+
+## PR5 — Deploy + README
+
+- **Status:** `planned`
+- **Branch:** _(set on start)_
+- **GitHub:** _(set when opened)_
+- **Depends on:** PR4 merged/approved (or minimal API+extract path live)
+
+### Scope
+
+- Render Web Service for FastAPI (public URL); env: `GEMINI_API_KEY`, `DATABASE_URL`, `CORS_ORIGINS`
+- Render Static Site for frontend; `VITE_API_BASE_URL` → API URL
+- README: architecture, decisions link, limitations, Known issues, with-more-time / short future roadmap
+- S3 extras only if deploy already green and time remains; otherwise document under with-more-time
+
+### Acceptance criteria
+
+- [ ] Public API health endpoint reachable
+- [ ] Public `POST /api/v1/extract` works with a PDF (reviewer-usable)
+- [ ] Confirm + Order CRUD work against deployed API
+- [ ] Deployed UI talks to deployed API (CORS + `VITE_API_BASE_URL` correct)
+- [ ] Secrets set in Render only; not in git
+- [ ] README covers architecture, decisions, limitations (incl. unauthenticated API risk), Known issues, with-more-time / roadmap
+- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review / submission packaging
+
+### Summary
+
+_(fill on finish)_
+
+### Test plan
+
+- [ ] Hit public health URL
+- [ ] Upload + extract + confirm on production
+- [ ] UI list/create path on production
+- [ ] Confirm README lists public URLs
+
+### Notes / risks
+
+_(fill on finish; call out SQLite ephemeral disk on free tier if applicable)_
