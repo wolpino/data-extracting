@@ -77,6 +77,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 - **Alternatives considered:** Rely only on GitHub PR descriptions; update PROGRESS only.
 - **Revisit when:** Never during assessment — this is process law.
 
+### 2026-08-07 — Backend package layout (uv app)
+
+- **Decision:** Use uv `--app` layout `backend/src/data_extracting_backend/` with `main.py` + `config.py` (not a top-level `app/` folder).
+- **Reasoning:** Matches official uv project defaults; avoids fighting the tool. Uvicorn target: `data_extracting_backend.main:app`.
+- **Alternatives considered:** Flat `backend/app/` without src layout.
+- **Revisit when:** Never required for MVP.
+
 ### 2026-08-07 — Security MVP baseline vs later
 
 - **Decision:** Ship a small security baseline with the features that need it (env secrets, server-side Gemini key, CORS allowlist, PDF-only + size limit, filename sanitize, no PDF bytes in logs, structured errors). Keep auth, LLM rate limits, malware scan, and PHI program as later. Document unauthenticated public API as accepted take-home risk.

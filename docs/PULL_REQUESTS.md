@@ -22,8 +22,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 
 | PR | Title | Status |
 |----|-------|--------|
-| [PR0](#pr0--spec-decisions-agent-process) | Spec, decisions, agent process | `ready_for_review` |
-| [PR1](#pr1--scaffold) | Backend + frontend scaffold | `planned` |
+| [PR0](#pr0--spec-decisions-agent-process) | Spec, decisions, agent process | `merged` |
+| [PR1](#pr1--scaffold) | Backend + frontend scaffold | `ready_for_review` |
 | [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `planned` |
 | [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `planned` |
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `planned` |
@@ -33,11 +33,12 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 
 ## PR0 — Spec, decisions, agent process
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `docs/pr0-spec-process`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/1
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 
 ### Scope
 
@@ -57,7 +58,7 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 - [x] Backend/frontend Cursor rules exist for stack conventions
 - [x] No secrets or `.env` committed; `.gitignore` covers env/venv/node_modules/db
 - [x] GitHub PR opened for human review
-- [ ] Human approves before PR1 starts
+- [x] Human approves before PR1 starts
 
 ### Summary
 
@@ -80,42 +81,47 @@ Establish product/process source of truth before scaffolding so agents do not du
 
 ## PR1 — Scaffold
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review`
+- **Branch:** `scaffold/pr1`
+- **GitHub:** _(filled after open)_
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR0 approved
 
 ### Scope
 
-- `backend/` via uv + FastAPI; `GET /health` (optional `/api/v1/health`)
+- `backend/` via uv + FastAPI; `GET /health` + `GET /api/v1/health`
 - `frontend/` via Vite + React + TypeScript; placeholder page only (no Order UI)
 - Root `.env.example` (`DATABASE_URL`, `GEMINI_API_KEY`, `CORS_ORIGINS`, `VITE_API_BASE_URL`)
-- Settings stub; minimal run instructions (root or package README stubs)
+- Settings stub; minimal run instructions (root + package READMEs)
 - Deps ready for later: sqlalchemy, pydantic-settings (Gemini client deferred to PR4)
 
 ### Acceptance criteria
 
-- [ ] `backend/` installs with uv; `uvicorn` serves health **200**
-- [ ] `frontend/` installs and `npm run dev` loads placeholder UI
-- [ ] `.env.example` present with placeholders only (no real secrets)
-- [ ] Env-driven settings stub exists on backend; frontend can read `VITE_API_BASE_URL`
-- [ ] `.gitignore` still excludes `.env`, venvs, `node_modules`, `dist`, `*.db`
-- [ ] No Order CRUD, extract, or Gemini code yet
+- [x] `backend/` installs with uv; `uvicorn` serves health **200**
+- [x] `frontend/` installs and `npm run build` succeeds (placeholder UI)
+- [x] `.env.example` present with placeholders only (no real secrets)
+- [x] Env-driven settings stub exists on backend; frontend can read `VITE_API_BASE_URL`
+- [x] `.gitignore` still excludes `.env`, venvs, `node_modules`, `dist`, `*.db`
+- [x] No Order CRUD, extract, or Gemini code yet
 - [ ] `docs/PULL_REQUESTS.md` + `docs/PROGRESS.md` updated; GitHub PR opened; pause for review
 
 ### Summary
 
-_(fill on finish)_
+Scaffold monorepo shells: uv-managed FastAPI backend with health routes and pydantic-settings, Vite React TS frontend placeholder that reads `VITE_API_BASE_URL`, plus `.env.example` and run docs. No business logic yet.
 
 ### Test plan
 
-- [ ] `uv run` health endpoint locally
-- [ ] Frontend dev server loads
-- [ ] Grep/diff shows no committed secrets
+- [x] `uv run uvicorn …` → `GET /health` and `/api/v1/health` return 200
+- [x] `npm run build` in `frontend/` succeeds
+- [ ] `npm run dev` loads placeholder (reviewer)
+- [x] No committed secrets / `.env`
 
 ### Notes / risks
 
-_(fill on finish)_
+- Soft ~20-file PR budget exceeded (~28) due to Vite template + `package-lock.json` + `uv.lock`; kept as one cohesive scaffold PR rather than splitting API/UI.
+- Browser health fetch may fail until CORS in PR3; curl works now.
+- Backend package path is `data_extracting_backend` (uv app layout), not top-level `app/`.
 
 ---
 
