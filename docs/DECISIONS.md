@@ -14,6 +14,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Render deploy via Blueprint + uv sync
+
+- **Decision:** Ship `render.yaml` (API web service + static UI) using Render’s native uv support: rootDir `backend/` (with `uv.lock`), build `uv sync --frozen`, start `uv run uvicorn …`.
+- **Reasoning:** Project is uv-first; Render enables uv when `uv.lock` is present ([uv-version](https://render.com/docs/uv-version)). Avoids a parallel pip/`requirements.txt` install path.
+- **Alternatives considered:** `pip install -r requirements.txt` from `uv export`; Docker; single combined service serving API + static files.
+- **Revisit when:** Need durable Postgres disk or custom Docker for native deps.
+
 ### 2026-08-07 — Stack lock
 
 - **Decision:** FastAPI + uv; Vite + React + TypeScript; Gemini server-side; Render (web service + static site).

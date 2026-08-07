@@ -27,8 +27,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `merged` |
 | [PR2b](#pr2b--code-comments--agent-mandate) | Code comments + agent mandate | `merged` |
 | [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `merged` |
-| [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `ready_for_review` |
-| [PR5](#pr5--deploy--readme) | Deploy + README | `planned` |
+| [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `merged` |
+| [PR5](#pr5--deploy--readme) | Deploy + README | `in_progress` |
 
 ---
 
@@ -268,11 +268,12 @@ Add CORS allowlist middleware and a thin Orders UI where create/update/delete on
 
 ## PR4 — Gemini extract + confirm
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `feature/pr4-extract-confirm`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/6
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR3 merged/approved
 
 ### Scope
@@ -318,9 +319,10 @@ Add Gemini PDF extract (draft-only) and `/orders/confirm`, wire thin UI upload �
 
 ## PR5 — Deploy + README
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `in_progress`
+- **Branch:** `deploy/pr5-render-readme`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/7
+- **Started:** 2026-08-07
 - **Depends on:** PR4 merged/approved (or minimal API+extract path live)
 
 ### Scope
