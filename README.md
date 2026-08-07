@@ -117,6 +117,7 @@ Free-tier note: SQLite lives on the instance filesystem and is **ephemeral acros
 ## Known issues
 
 - Gemini free-tier quota can 429; override model with `GEMINI_MODEL` or raise billing limits.
+- Activity log has no actor/user name yet (no auth in MVP) — see [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## With more time / short roadmap
 

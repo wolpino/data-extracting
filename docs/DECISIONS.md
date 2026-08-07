@@ -14,12 +14,19 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — PR8 UI functionality testing adjustments
+
+- **Decision:** After human UI testing on PR8: (1) no second confirm modal — extract/create/save use one labeled primary button (`Confirm & save Order` / `Create Order` / `Save changes`); delete uses inline **Confirm delete** / **Cancel** on the row (no `Delete #N?` label). (2) Activity sits in a scrollable aside beside the form with load-more and human-readable summaries + absolute times (naive UTC timestamps parsed as UTC). (3) Incomplete extracts return 422 and do not fill the form; N/A / Unknown placeholders rejected — all three of first name, last name, DOB are mandatory.
+- **Reasoning:** Double-confirm fought the extract review flow; activity needed to be reference-sized and readable; placeholder drafts undermined trust in extract.
+- **Alternatives considered:** Keep modal for all mutations; browser `window.confirm` for delete; leave raw action codes in the activity panel.
+- **Revisit when:** Auth lands — **the audit log would be stronger with user names / actor identity, but there is no auth yet** (accepted MVP cut; track under PR9+ hardening / auth).
+
 ### 2026-08-07 — Confirm is the primary button (no double modal)
 
 - **Decision:** Extract/create/save use a clearly labeled primary button (`Confirm & save Order` / `Create Order` / `Save changes`) with no second modal. Delete keeps a single `window.confirm`. Incomplete extracts return 422 and do not populate the form; N/A placeholders are rejected.
 - **Reasoning:** Human check for extract is reviewing fields then confirming once; a modal after “review” was a double confirm. Activity sits beside the form as a scrollable aside with load-more.
 - **Alternatives considered:** Custom modal for all mutations; always show extract placeholders.
-- **Revisit when:** Stronger delete UX (inline undo) if needed.
+- **Revisit when:** Stronger delete UX (inline undo) if needed. **Superseded/refined by “PR8 UI functionality testing adjustments” above** (inline Confirm delete; readable activity times).
 
 ### 2026-08-07 — Confirm UI: modal dialog (PR8)
 

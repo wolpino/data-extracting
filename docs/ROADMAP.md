@@ -55,6 +55,8 @@ Prioritized after a green public deploy. Aligns with SPEC SHOULD/CUT and [DECISI
 
 Accepted MVP risk: public unauthenticated write + `/extract`. Next hardening is **PR9** (API key + extract rate limit), after tests + UI. Before **real PHI**: auth, durable DB, retention policy, malware scanning — this repo uses fake Buffy data only.
 
+**Note:** The activity / audit log would be stronger with **user names (actor identity)**, but there is **no auth yet** — see DECISIONS (PR8 UI testing adjustments). Revisit when auth/API key lands.
+
 ## Later (after PR10)
 
 - Spec B Order fields: `status`, `notes`, `equipment_type`
