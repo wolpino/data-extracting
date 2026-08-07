@@ -16,14 +16,22 @@ cd backend
 uv run uvicorn data_extracting_backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## Quick test (PR2)
+## Quick test
 
-One command — starts an ephemeral server on `:8010` with a temp DB, runs CRUD + validation + activity checks, then stops:
+Orders CRUD:
 
 ```bash
 # from repo root
 ./backend/scripts/smoke_orders.sh
 ```
+
+Extract + confirm (needs `GEMINI_API_KEY` in `backend/.env`):
+
+```bash
+./backend/scripts/smoke_extract.sh
+```
+
+Default model: `gemini-3.6-flash` (`GEMINI_MODEL` to override).
 
 Against an already-running API:
 

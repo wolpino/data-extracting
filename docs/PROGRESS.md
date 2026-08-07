@@ -4,18 +4,19 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR3 — Thin UI + CORS
-- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/5 — **do not start PR4 until approved**
+- **Phase:** PR4 — Gemini extract + confirm
+- **Status:** Opening GitHub PR — **do not start PR5 until approved**
 
 ## Done
 
-- [x] PR0–PR2b merged
-- [x] CORS allowlist + Orders UI with confirm-before-save
+- [x] PR0–PR3 merged
+- [x] Extract + confirm API/UI; model `gemini-3.6-flash`
+- [x] Confirm UX debt logged for later
 
 ## Next
 
-- Human reviews PR3
-- On go-ahead: PR4 Gemini extract + confirm
+- Human reviews PR4
+- On go-ahead: PR5 deploy + README
 
 ## Blockers
 
@@ -23,4 +24,4 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Known issues
 
-- (none new)
+- Confirm banner at top of page is not user-friendly — defer UX improvement (modal near action). See DECISIONS.

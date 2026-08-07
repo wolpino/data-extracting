@@ -14,6 +14,9 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./app.db"
     gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.6-flash"
+    # Max PDF upload size (bytes) for /extract.
+    max_upload_bytes: int = 10 * 1024 * 1024
     # Comma-separated allowlist — never use * in production demos.
     cors_origins: str = "http://localhost:5173"
 

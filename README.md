@@ -14,10 +14,11 @@ cd backend && uv sync && uv run uvicorn data_extracting_backend.main:app --reloa
 cd frontend && npm install && npm run dev
 ```
 
-### Quick API smoke (Order CRUD)
+### Quick API smoke
 
 ```bash
 ./backend/scripts/smoke_orders.sh
+./backend/scripts/smoke_extract.sh   # needs GEMINI_API_KEY in backend/.env
 ```
 
 See [backend/README.md](backend/README.md) for curl cheatsheet and OpenAPI (`/docs`).
