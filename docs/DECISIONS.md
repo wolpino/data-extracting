@@ -14,6 +14,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Extract LLM schema allows “not found” (no forced invent)
+
+- **Decision:** Gemini returns `ExtractCandidate` with `demographics_found` + optional name/DOB fields. API returns a draft only when `demographics_found=true` and all three fields pass placeholder checks; otherwise **422** and the UI must not fill the form. Do not use a required-only draft schema for the LLM (it encouraged hallucinated demographics on unrelated PDFs).
+- **Reasoning:** Regression: non-medical PDFs still got invented first/last/DOB when the response schema required those fields.
+- **Alternatives considered:** Post-filter only (misses plausible invents); always trust the model.
+- **Revisit when:** Citations/page evidence or confidence scores are added.
+
 ### 2026-08-07 — PR8 UI functionality testing adjustments
 
 - **Decision:** After human UI testing on PR8: (1) no second confirm modal — extract/create/save use one labeled primary button (`Confirm & save Order` / `Create Order` / `Save changes`); delete uses inline **Confirm delete** / **Cancel** on the row (no `Delete #N?` label). (2) Activity sits in a scrollable aside beside the form with load-more and human-readable summaries + absolute times (naive UTC timestamps parsed as UTC). (3) Incomplete extracts return 422 and do not fill the form; N/A / Unknown placeholders rejected — all three of first name, last name, DOB are mandatory.
