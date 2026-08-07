@@ -13,6 +13,7 @@ import {
   type OrderInput,
   updateOrder,
 } from './api'
+import { formatActivitySummary, formatActivityWhen } from './activityFormat'
 
 type FormState = {
   first_name: string
@@ -307,30 +308,26 @@ function App() {
         <aside className="activity-panel" aria-label="Recent activity">
           <h2>Activity</h2>
           <p className="muted activity-help">
-            Audit log (metadata only).
+            What happened recently (no file contents).
           </p>
           <div className="activity-scroll">
             {activity.length === 0 ? (
               <p className="muted">No activity yet.</p>
             ) : (
               <ul className="activity-list">
-                {activity.map((row) => (
-                  <li key={row.id}>
-                    <div className="activity-when">
-                      {new Date(row.created_at).toLocaleString()}
-                    </div>
-                    <div>
-                      <strong>{row.action}</strong>{' '}
-                      <span className="muted">
-                        {row.entity_type}
-                        {row.entity_id != null ? ` #${row.entity_id}` : ''}
-                      </span>
-                    </div>
-                    {row.detail && (
-                      <div className="activity-detail muted">{row.detail}</div>
-                    )}
-                  </li>
-                ))}
+                {activity.map((row) => {
+                  const when = formatActivityWhen(row.created_at)
+                  return (
+                    <li key={row.id}>
+                      <div className="activity-when" title={when.title}>
+                        {when.label}
+                      </div>
+                      <div className="activity-summary">
+                        {formatActivitySummary(row)}
+                      </div>
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </div>
