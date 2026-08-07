@@ -51,12 +51,19 @@ echo "== health =="
 curl -sf "$BASE/health"
 echo
 
+# Optional: API_KEY=... ./smoke_orders.sh when the server has API_KEY set.
+AUTH_HDR=()
+if [[ -n "${API_KEY:-}" ]]; then
+  AUTH_HDR=(-H "X-API-Key: ${API_KEY}")
+fi
+
 echo "== list (expect Buffy seed) =="
 curl -sf "$BASE/api/v1/orders" | tee /tmp/smoke-list.json | python3 -m json.tool
 echo
 
 echo "== create Willow =="
 CREATE=$(curl -sf -X POST "$BASE/api/v1/orders" \
+  "${AUTH_HDR[@]}" \
   -H 'Content-Type: application/json' \
   -d '{"first_name":"Willow","last_name":"Rosenberg","date_of_birth":"1981-05-01","source_filename":"willow-chart.pdf"}')
 echo "$CREATE" | tee /tmp/smoke-create.json | python3 -m json.tool
@@ -69,12 +76,14 @@ echo
 
 echo "== patch =="
 curl -sf -X PATCH "$BASE/api/v1/orders/$OID" \
+  "${AUTH_HDR[@]}" \
   -H 'Content-Type: application/json' \
   -d '{"first_name":"Willow Mia"}' | python3 -m json.tool
 echo
 
 echo "== reject path filename (expect 422) =="
 CODE=$(curl -s -o /tmp/smoke-bad-filename.json -w '%{http_code}' -X POST "$BASE/api/v1/orders" \
+  "${AUTH_HDR[@]}" \
   -H 'Content-Type: application/json' \
   -d '{"first_name":"Xander","last_name":"Harris","date_of_birth":"1981-01-01","source_filename":"../evil.pdf"}')
 echo "HTTP $CODE"
@@ -83,6 +92,7 @@ python3 -m json.tool </tmp/smoke-bad-filename.json
 
 echo "== reject missing fields (expect 422) =="
 CODE=$(curl -s -o /tmp/smoke-missing.json -w '%{http_code}' -X POST "$BASE/api/v1/orders" \
+  "${AUTH_HDR[@]}" \
   -H 'Content-Type: application/json' \
   -d '{"first_name":"Cordelia"}')
 echo "HTTP $CODE"
@@ -90,7 +100,7 @@ python3 -m json.tool </tmp/smoke-missing.json
 [[ "$CODE" == "422" ]] || { echo "FAIL: expected 422 for missing fields"; exit 1; }
 
 echo "== delete =="
-CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE "$BASE/api/v1/orders/$OID")
+CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE "$BASE/api/v1/orders/$OID" "${AUTH_HDR[@]}")
 echo "HTTP $CODE"
 [[ "$CODE" == "204" ]] || { echo "FAIL: expected 204 on delete"; exit 1; }
 

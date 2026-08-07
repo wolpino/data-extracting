@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173"
     # Opt-in Buffy demo Order on startup. Leave false on Render / submission.
     seed_demo_data: bool = False
+    # Shared demo key for writes + /extract. Empty = open (local default).
+    # Set on Render; pass via X-API-Key (not a Vite secret — UI uses sessionStorage).
+    api_key: str = ""
 
     def cors_origin_list(self) -> list[str]:
         return [part.strip() for part in self.cors_origins.split(",") if part.strip()]

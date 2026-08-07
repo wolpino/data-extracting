@@ -20,6 +20,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Generator[TestCli
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{db_path}")
     monkeypatch.setenv("SEED_DEMO_DATA", "false")
     monkeypatch.setenv("GEMINI_API_KEY", "")
+    monkeypatch.setenv("API_KEY", "")  # keep default suite open unless a keyed fixture
     monkeypatch.setenv("MAX_UPLOAD_BYTES", "1048576")
     get_settings.cache_clear()
     setup_engine()

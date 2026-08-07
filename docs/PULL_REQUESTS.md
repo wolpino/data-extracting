@@ -32,7 +32,7 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `merged` |
 | [PR7](#pr7--written-automated-tests) | Written automated tests | `merged` |
 | [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `ready_for_review` |
-| [PR9](#pr9--hardening) | API key + extract rate limit | `planned` |
+| [PR9](#pr9--hardening) | API key + extract rate limit | `ready_for_review` |
 | [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
 
 ---
@@ -505,35 +505,43 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 
 ## PR9 — Hardening
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review` (API-key slice; rate-limit sibling separate)
+- **Branch:** `feature/pr9-api-key`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/11
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR8 merged/approved
 
 ### Scope
 
-- Shared API key (or equivalent) on write + `/extract`
-- Rate limit `/extract`
-- Document client header / UI wiring
+- Shared API key on write + `/extract` + confirm (`X-API-Key` / `API_KEY`) — **this PR**
+- Rate limit `/extract` — sibling `feature/pr9-extract-rate-limit`
+- Document client header / UI sessionStorage wiring (not `VITE_*`)
 
 ### Acceptance criteria
 
-- [ ] Unauthenticated writes rejected when key configured
-- [ ] Extract rate-limited with clear errors
-- [ ] README updated; living log; pause
+- [x] Unauthenticated writes rejected when key configured _(API-key slice)_
+- [ ] Extract rate-limited with clear errors _(rate-limit sibling)_
+- [x] README / Render env / living log updated for demo key; pause
 
-### Summary
+### Summary (API-key slice)
 
-_(fill on finish)_
+- Optional `API_KEY`: when set, mutating Orders + `/extract` require `X-API-Key`; GETs open; unset = local open
+- UI “Demo API key” field → `sessionStorage`; README shared value `demo-reviewer-key`
+- `auth.py` + `test_api_key.py`; smoke scripts accept `API_KEY` env for `X-API-Key`
 
 ### Test plan
 
-- [ ] Tests from PR7/PR8 updated for auth/rate-limit behavior
-- [ ] Manual prod check with key
+- [x] `test_api_key.py`: 401 without key / 201 with key / open when unset; extract gated
+- [ ] Rate-limit tests on sibling branch
+- [ ] Manual: set Render `API_KEY=demo-reviewer-key`, paste in UI, happy path
+- [ ] `API_KEY=demo-reviewer-key ./backend/scripts/smoke_orders.sh` against keyed server
 
 ### Notes / risks
 
-- Keep demo usable for reviewers (document how to pass the key).
+- Set Render `API_KEY` only after UI with sessionStorage field is deployed.
+- Demo key in README is intentional (shared take-home), not production secrecy.
+- Rate-limit sibling can merge separately or be combined after.
 
 ---
 

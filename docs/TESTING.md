@@ -35,7 +35,7 @@ Shell smokes remain for quick manual/prod checks: `./backend/scripts/smoke_order
 |------|------------|-----------------|
 | Orders CRUD | create → get → list → put/patch → delete | 404; blank names → 422; invalid DOB → 422 |
 | Filename sanitize | basename `chart.pdf` accepted | `../evil.pdf`, `a/b.pdf` → validation error (exact behavior of `filenames.py`) |
-| Extract | mocked PDF → 200 draft JSON | non-PDF → 415; empty → 400; oversize → 413; missing key → 503; Gemini error → 502 |
+| Extract | mocked PDF → 200 draft JSON | non-PDF → 415; empty → 400; oversize → 413; missing key → 503; Gemini error → 502; over rate limit → 429 |
 | Confirm-before-save | extract leaves order count unchanged; confirm → +1 | confirm bad body → 422; confirm does not call Gemini |
 | Seed | with `SEED_DEMO_DATA=false`, list does not require a Buffy row | optional: `true` seeds Buffy Summers once |
 
