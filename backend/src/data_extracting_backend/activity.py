@@ -1,3 +1,5 @@
+"""Activity logging helpers — metadata only; never store PDF/file bytes."""
+
 from sqlalchemy.orm import Session
 
 from data_extracting_backend.models import ActivityLog
@@ -13,7 +15,6 @@ def log_activity(
     path: str | None = None,
     detail: str | None = None,
 ) -> None:
-    """Persist activity metadata only — never PDF/file bytes."""
     db.add(
         ActivityLog(
             action=action,

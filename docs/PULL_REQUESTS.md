@@ -24,7 +24,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 |----|-------|--------|
 | [PR0](#pr0--spec-decisions-agent-process) | Spec, decisions, agent process | `merged` |
 | [PR1](#pr1--scaffold) | Backend + frontend scaffold | `merged` |
-| [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `ready_for_review` |
+| [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `merged` |
+| [PR2b](#pr2b--code-comments--agent-mandate) | Code comments + agent mandate | `ready_for_review` |
 | [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `planned` |
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `planned` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `planned` |
@@ -128,11 +129,12 @@ Scaffold monorepo shells: uv-managed FastAPI backend with health routes and pyda
 
 ## PR2 — Order CRUD + activity log
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `feature/pr2-order-crud`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/3
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR1 merged/approved
 
 ### Scope
@@ -176,12 +178,53 @@ Add SQLAlchemy Order + ActivityLog models, Pydantic validation, and full `/api/v
 
 ---
 
+## PR2b — Code comments + agent mandate
+
+- **Status:** `ready_for_review`
+- **Branch:** `docs/pr2b-code-comments`
+- **GitHub:** _(filled after open)_
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
+- **Depends on:** PR2 merged
+
+### Scope
+
+- Add `docs/COMMENTING.md` standard (why/constraints, no noise)
+- Mandate ongoing comments in AGENTS.md, Cursor rules, SPEC, DECISIONS
+- Catch-up: concise module/constraint comments on existing backend + thin frontend note
+- Insert PR2b into living PR index / work order (before PR3)
+
+### Acceptance criteria
+
+- [x] `docs/COMMENTING.md` exists with do/don’t guidance
+- [x] AGENTS + always-on Cursor rule require comments in every future PR
+- [x] Backend non-obvious paths commented (SQLite threading, activity metadata-only, filename sanitize, `updated_at` touch, flush-before-log)
+- [x] Frontend notes API base / CORS expectation
+- [x] SPEC / DECISIONS / PULL_REQUESTS updated; no behavior changes
+- [ ] GitHub PR opened; pause for review
+
+### Summary
+
+Catch up concise comments on the current codebase and lock an agent mandate so later PRs keep explaining non-obvious why/constraints.
+
+### Test plan
+
+- [x] `./backend/scripts/smoke_orders.sh` still passes (comments-only; no logic change intended)
+- [ ] Skim commented modules for noise vs signal (reviewer)
+
+### Notes / risks
+
+- Style is intentionally sparse — prefer why over narrating CRUD.
+- Ongoing enforcement is process/rules; reviewers should bounce PRs that omit needed comments.
+
+---
+
 ## PR3 — Thin UI + CORS
 
 - **Status:** `planned`
 - **Branch:** _(set on start)_
 - **GitHub:** _(set when opened)_
-- **Depends on:** PR2 merged/approved
+- **Depends on:** PR2b merged/approved
 
 ### Scope
 

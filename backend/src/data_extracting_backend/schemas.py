@@ -1,3 +1,5 @@
+"""Pydantic request/response models. Filename fields run through basename sanitization."""
+
 from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator

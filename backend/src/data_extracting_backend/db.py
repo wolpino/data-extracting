@@ -1,3 +1,5 @@
+"""SQLAlchemy engine/session. Bound at import from DATABASE_URL — restart after env changes."""
+
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
@@ -12,6 +14,7 @@ class Base(DeclarativeBase):
 
 def _engine_kwargs(url: str) -> dict:
     if url.startswith("sqlite"):
+        # SQLite: allow FastAPI's multi-thread request handling on one connection.
         return {"connect_args": {"check_same_thread": False}}
     return {}
 
@@ -33,4 +36,5 @@ def init_db() -> None:
     # Import models so metadata is registered before create_all.
     from data_extracting_backend import models  # noqa: F401
 
+    # MVP: create_all only; Alembic is a later roadmap item.
     Base.metadata.create_all(bind=engine)

@@ -7,7 +7,8 @@ alwaysApply: true
 
 - Follow [docs/SPEC.md](docs/SPEC.md), [AGENTS.md](AGENTS.md), [docs/PROGRESS.md](docs/PROGRESS.md), [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md).
 - **Mandate:** update `docs/PULL_REQUESTS.md` when a PR starts or finishes. Skipping is a process failure.
-- Work order only: scaffold → CRUD → UI+CORS → extract → confirm → deploy → README.
+- Work order: scaffold → CRUD → comments hygiene (PR2b) → UI+CORS → extract → confirm → deploy → README.
+- **Comments:** follow `docs/COMMENTING.md` — concise why/constraint comments on non-obvious code in every PR; no noisy narration.
 - Pause after each PR/checkpoint; do not start the next PR until the human says so.
 - Ask when unclear; do not invent requirements. Log decisions in `docs/DECISIONS.md`.
 - Prefer official docs (uv, FastAPI, Vite, Render, Gemini) over assumptions.
