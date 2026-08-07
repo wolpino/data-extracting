@@ -5,7 +5,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR2b — Code comments + agent mandate
-- **Status:** Opening GitHub PR — **do not start PR3 until PR2b approved**
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/4 — **do not start PR3 until PR2b approved**
 
 ## Done
 

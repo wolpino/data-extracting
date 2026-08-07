@@ -182,7 +182,7 @@ Add SQLAlchemy Order + ActivityLog models, Pydantic validation, and full `/api/v
 
 - **Status:** `ready_for_review`
 - **Branch:** `docs/pr2b-code-comments`
-- **GitHub:** _(filled after open)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/4
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
 - **Depends on:** PR2 merged
@@ -201,7 +201,7 @@ Add SQLAlchemy Order + ActivityLog models, Pydantic validation, and full `/api/v
 - [x] Backend non-obvious paths commented (SQLite threading, activity metadata-only, filename sanitize, `updated_at` touch, flush-before-log)
 - [x] Frontend notes API base / CORS expectation
 - [x] SPEC / DECISIONS / PULL_REQUESTS updated; no behavior changes
-- [ ] GitHub PR opened; pause for review
+- [x] GitHub PR opened; pause for review
 
 ### Summary
 
