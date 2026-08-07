@@ -460,8 +460,9 @@ Add pytest suite per TESTING.md, gate Buffy startup seed behind `SEED_DEMO_DATA`
 
 - **Status:** `ready_for_review`
 - **Branch:** `feature/pr8-ui-functionality`
-- **GitHub:** _(set when opened)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/10
 - **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR7 merged/approved
 
 ### Scope

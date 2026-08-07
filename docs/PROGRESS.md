@@ -5,9 +5,8 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR8 — UI functionality
-- **Status:** `ready_for_review` — branch `feature/pr8-ui-functionality`
-- **GitHub:** _(set when opened)_
-
+- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/10
+- **Branch:** `feature/pr8-ui-functionality`
 ## Done
 
 - [x] PR0–PR7 merged (PR7: https://github.com/wolpino/data-extracting/pull/9)
