@@ -25,3 +25,4 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Known issues
 
 - None blocking demo path; Gemini quota 429s remain possible on free tier.
+- DOB date picker allows future dates — should block dates after today (`max=today` + validation). Track for small UI follow-up.
