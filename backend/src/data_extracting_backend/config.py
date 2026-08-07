@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     max_upload_bytes: int = 10 * 1024 * 1024
     # Comma-separated allowlist — never use * in production demos.
     cors_origins: str = "http://localhost:5173"
+    # Opt-in Buffy demo Order on startup. Leave false on Render / submission.
+    seed_demo_data: bool = False
 
     def cors_origin_list(self) -> list[str]:
         return [part.strip() for part in self.cors_origins.split(",") if part.strip()]

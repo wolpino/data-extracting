@@ -20,6 +20,9 @@ services:
         value: gemini-3.6-flash
       - key: MAX_UPLOAD_BYTES
         value: "10485760"
+      # Submission/demo: do not seed Buffy Order on the public instance.
+      - key: SEED_DEMO_DATA
+        value: "false"
       # Dashboard-only secrets / cross-service URLs (do not commit real values).
       - key: GEMINI_API_KEY
         sync: false

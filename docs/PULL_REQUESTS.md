@@ -29,8 +29,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `merged` |
 | [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `merged` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `merged` |
-| [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `ready_for_review` |
-| [PR7](#pr7--written-automated-tests) | Written automated tests | `planned` |
+| [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `merged` |
+| [PR7](#pr7--written-automated-tests) | Written automated tests | `ready_for_review` |
 | [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `planned` |
 | [PR9](#pr9--hardening) | API key + extract rate limit | `planned` |
 | [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
@@ -371,11 +371,12 @@ Deploy FastAPI + Vite static site on Render (`uv sync` build), ship Blueprint/`r
 
 ## PR6 — Docs, testdata + manual checklist
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `docs/pr6-reviewer-readme-roadmap`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/8
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR5 merged + public URLs known
 
 ### Scope
@@ -413,38 +414,44 @@ Ship reviewer-facing README (live URLs + manual checklist), expand post-MVP ROAD
 
 ## PR7 — Written automated tests
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review`
+- **Branch:** `test/pr7-written-tests`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/9
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR6 merged/approved
 
 ### Scope
 
-- Schema/unit tests for Order + extract draft validation
-- FastAPI TestClient: CRUD, non-PDF 415, extract does not persist, confirm persists
-- Mock Gemini by default; optional live-key integration marked local-only
-- Use `docs/testdata/` fixtures where useful
+- `docs/TESTING.md` + AGENTS testing mandate
+- Schema/unit + FastAPI TestClient suite (CRUD, extract edges, confirm-before-save)
+- Mock Gemini by default; live extract via smoke scripts
+- `SEED_DEMO_DATA` opt-in (default off for Render/submission)
+- `setup_engine()` for temp DB in tests
 
 ### Acceptance criteria
 
-- [ ] `pytest` (or equivalent) suite runs locally via uv
-- [ ] Extract non-persist + confirm persist covered
-- [ ] Filename sanitize / validation covered
-- [ ] Living PR log updated; pause
+- [x] `uv run pytest` green without `GEMINI_API_KEY`
+- [x] Extract non-persist + confirm persist covered
+- [x] Filename sanitize / validation covered
+- [x] Demo seed disabled by default; documented for local vs Render
+- [x] Living PR log updated; pause
 
 ### Summary
 
-_(fill on finish)_
+Add pytest suite per TESTING.md, gate Buffy startup seed behind `SEED_DEMO_DATA`, and document constraints so agents do not hit live Gemini or shared DBs in default tests.
 
 ### Test plan
 
-- [ ] Run full suite green without `GEMINI_API_KEY`
-- [ ] Optional: one live extract with key
+- [x] `cd backend && uv run pytest` (25 passed)
+- [ ] Optional: `./backend/scripts/smoke_extract.sh` with key
+- [ ] Confirm Render env leaves `SEED_DEMO_DATA` false/unset after deploy
 
 ### Notes / risks
 
 - Do not call real Gemini in default CI.
-- Activity list endpoint tests land with PR8 when that API is added.
+- Activity list endpoint tests land with PR8.
+- Existing local `app.db` may still contain an old Buffy row until deleted; new processes won’t re-seed unless `SEED_DEMO_DATA=true`.
 
 ---
 

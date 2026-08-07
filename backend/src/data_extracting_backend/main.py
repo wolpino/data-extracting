@@ -37,9 +37,10 @@ def seed_demo_order() -> None:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    # Create tables then seed once — safe to re-run on reload.
+    # Create tables; demo seed only when SEED_DEMO_DATA=true (local), never by default on Render.
     init_db()
-    seed_demo_order()
+    if get_settings().seed_demo_data:
+        seed_demo_order()
     yield
 
 

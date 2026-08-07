@@ -11,6 +11,7 @@ Instructions for any coding agent working in this repo. Human reviews; agent imp
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Current PR, done/next, blockers — **update every session** |
 | [docs/PULL_REQUESTS.md](docs/PULL_REQUESTS.md) | Living PR log — **mandatory update on PR start/finish** |
 | [docs/COMMENTING.md](docs/COMMENTING.md) | Concise comment standard — **required in every PR** |
+| [docs/TESTING.md](docs/TESTING.md) | Automated test matrix + constraints — **required for PR7+** |
 | Official docs | uv, FastAPI, Vite, Render, Gemini — prefer over memory |
 
 Do **not** invent requirements that contradict SPEC. If unclear: **ask the human**. Do not assume.
@@ -35,6 +36,12 @@ Do **not** invent requirements that contradict SPEC. If unclear: **ask the human
 - Follow [docs/COMMENTING.md](docs/COMMENTING.md): clear, concise **why**/constraint comments — not noise.
 - Every feature PR must comment non-obvious logic (security, persistence boundaries, env quirks).
 - Do not ship uncommented tricky blocks; reviewers should not reverse-engineer intent.
+
+## Testing (mandatory for PR7+)
+
+- Follow [docs/TESTING.md](docs/TESTING.md): isolated DB, mock Gemini by default, required happy/edge matrix.
+- Default `uv run pytest` must pass without `GEMINI_API_KEY` / network.
+- Demo seed (`SEED_DEMO_DATA`) is opt-in for local only — never rely on it in tests or production.
 
 ## PR rules
 
@@ -74,7 +81,8 @@ Do **not** invent requirements that contradict SPEC. If unclear: **ask the human
 ## Demo data
 
 - Fake sample data only; Buffy naming for seeds/fixtures.
-- Test PDF under `docs/testdata/`.
+- Test PDFs under `docs/testdata/`.
+- Startup Buffy Order seed only when `SEED_DEMO_DATA=true` (local `.env`); default/off on Render.
 
 ## Security (MVP)
 

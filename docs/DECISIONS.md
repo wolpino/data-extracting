@@ -14,6 +14,13 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 
 ---
 
+### 2026-08-07 — Demo seed opt-in via SEED_DEMO_DATA
+
+- **Decision:** Startup Buffy Order seed runs only when `SEED_DEMO_DATA=true` (default `false`). Enable in local `.env`; keep false on Render/submission.
+- **Reasoning:** Public demo should not look pre-populated; local smoke still benefits from an optional seed.
+- **Alternatives considered:** Always seed; environment-name heuristics (`ENV=production`).
+- **Revisit when:** Fixtures replace seed entirely for local demos.
+
 ### 2026-08-07 — Post-MVP: written tests (PR7) before UI (PR8)
 
 - **Decision:** After PR6 docs, sequence is PR7 written tests → PR8 UI functionality → PR9 harden → PR10 Postgres.

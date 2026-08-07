@@ -4,21 +4,19 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 ## Current
 
-- **Phase:** PR6 — Docs + Buffy testdata + manual checklist
-- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/8
-- **Branch:** `docs/pr6-reviewer-readme-roadmap`
-
+- **Phase:** PR7 — Written automated tests
+- **Status:** `ready_for_review` — https://github.com/wolpino/data-extracting/pull/9
+- **Branch:** `test/pr7-written-tests`
 ## Done
 
-- [x] PR0–PR5 merged (PR5: https://github.com/wolpino/data-extracting/pull/7)
-- [x] Public deploy: https://data-extracting-api.onrender.com · https://data-extracting-ui.onrender.com
-- [x] Extract + confirm API/UI; model `gemini-3.6-flash`
-- [x] Confirm UX debt logged (PR8)
+- [x] PR0–PR6 merged (PR6: https://github.com/wolpino/data-extracting/pull/8)
+- [x] Public deploy live
+- [x] `docs/TESTING.md` + pytest suite (mock Gemini); `SEED_DEMO_DATA` opt-in
 
 ## Next
 
-- Human reviews PR6
-- On go-ahead: **PR7 written automated tests**, then PR8 UI functionality
+- Human reviews PR7
+- On go-ahead: PR8 UI functionality
 
 ## Blockers
 
@@ -28,3 +26,4 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 
 - Confirm banner at top of page is not user-friendly — PR8 near-action confirm. See DECISIONS / ROADMAP.
 - Activity logged but not shown in UI — PR8.
+- Ensure Render has `SEED_DEMO_DATA=false` (or unset) after this merges.

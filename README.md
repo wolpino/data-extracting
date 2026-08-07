@@ -77,7 +77,17 @@ cd frontend && npm install && npm run dev
 BASE=https://data-extracting-api.onrender.com ./backend/scripts/smoke_orders.sh
 ```
 
+### Automated tests
+
+```bash
+cd backend && uv sync --group dev && uv run pytest
+```
+
+See [docs/TESTING.md](docs/TESTING.md). Default suite mocks Gemini (no API key).
+
 Testdata: [docs/testdata/](docs/testdata/) (Buffy charts + assessment CPAP sample).
+
+Local API may set `SEED_DEMO_DATA=true` in `backend/.env` for a Buffy starter Order; leave **unset/false on Render** so the public demo starts empty.
 
 More curl notes: [backend/README.md](backend/README.md).
 
