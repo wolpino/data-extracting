@@ -9,9 +9,44 @@ from sqlalchemy.orm import Session
 from data_extracting_backend.activity import log_activity
 from data_extracting_backend.db import get_db
 from data_extracting_backend.models import Order
-from data_extracting_backend.schemas import OrderCreate, OrderPatch, OrderRead, OrderUpdate
+from data_extracting_backend.schemas import (
+    OrderCreate,
+    OrderPatch,
+    OrderRead,
+    OrderUpdate,
+)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+
+@router.post(
+    "/confirm",
+    response_model=OrderRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def confirm_order(
+    payload: OrderCreate, request: Request, db: Session = Depends(get_db)
+) -> Order:
+    """Persist a human-reviewed extract draft as an Order (confirm-before-save)."""
+    order = Order(
+        first_name=payload.first_name,
+        last_name=payload.last_name,
+        date_of_birth=payload.date_of_birth,
+        source_filename=payload.source_filename,
+    )
+    db.add(order)
+    db.flush()
+    log_activity(
+        db,
+        action="confirm",
+        entity_type="order",
+        entity_id=order.id,
+        method=request.method,
+        path=str(request.url.path),
+    )
+    db.commit()
+    db.refresh(order)
+    return order
 
 
 def _touch(order: Order) -> None:

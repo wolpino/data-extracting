@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import './App.css'
 import {
   apiBaseUrl,
+  confirmOrder,
   createOrder,
   deleteOrder,
+  extractDocument,
   listOrders,
   type Order,
   type OrderInput,
@@ -25,10 +27,12 @@ const emptyForm: FormState = {
 }
 
 // Pending mutation — API is called only after explicit Confirm (SPEC).
+// UX debt: banner at top is clunky — replace with near-action modal later.
 type Pending =
   | { kind: 'create'; input: OrderInput }
   | { kind: 'update'; id: number; input: OrderInput }
   | { kind: 'delete'; order: Order }
+  | { kind: 'confirmExtract'; input: OrderInput }
 
 function toInput(form: FormState): OrderInput {
   const filename = form.source_filename.trim()
@@ -47,6 +51,7 @@ function App() {
   const [pending, setPending] = useState<Pending | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [extracting, setExtracting] = useState(false)
 
   const refresh = useCallback(async () => {
     const rows = await listOrders()
@@ -98,6 +103,37 @@ function App() {
     setPending(null)
   }
 
+  async function onExtractFile(file: File | null) {
+    if (!file) return
+    setError(null)
+    setPending(null)
+    setExtracting(true)
+    try {
+      const draft = await extractDocument(file)
+      setEditingId(null)
+      setForm({
+        first_name: draft.first_name,
+        last_name: draft.last_name,
+        date_of_birth: draft.date_of_birth,
+        source_filename: file.name,
+      })
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Extract failed')
+    } finally {
+      setExtracting(false)
+    }
+  }
+
+  function reviewExtractConfirm() {
+    setError(null)
+    const input = toInput(form)
+    if (!input.first_name || !input.last_name || !input.date_of_birth) {
+      setError('First name, last name, and date of birth are required.')
+      return
+    }
+    setPending({ kind: 'confirmExtract', input })
+  }
+
   async function confirmPending() {
     if (!pending) return
     setBusy(true)
@@ -107,6 +143,8 @@ function App() {
         await createOrder(pending.input)
       } else if (pending.kind === 'update') {
         await updateOrder(pending.id, pending.input)
+      } else if (pending.kind === 'confirmExtract') {
+        await confirmOrder(pending.input)
       } else {
         await deleteOrder(pending.order.id)
       }
@@ -128,6 +166,9 @@ function App() {
     if (pending.kind === 'update') {
       return `Save changes to order #${pending.id}?`
     }
+    if (pending.kind === 'confirmExtract') {
+      return `Confirm extracted order for ${pending.input.first_name} ${pending.input.last_name}?`
+    }
     return `Delete order #${pending.order.id} (${pending.order.first_name} ${pending.order.last_name})?`
   })()
 
@@ -143,6 +184,9 @@ function App() {
       {pending && (
         <div className="confirm" role="alertdialog" aria-label="Confirm action">
           <p>{pendingLabel}</p>
+          <p className="muted">
+            Temporary confirm UI — will move near the action later.
+          </p>
           <div className="row">
             <button type="button" disabled={busy} onClick={() => void confirmPending()}>
               Confirm
@@ -158,6 +202,34 @@ function App() {
           </div>
         </div>
       )}
+
+      <section>
+        <h2>Extract from PDF</h2>
+        <p className="muted">
+          Upload returns a draft only. Review fields, then Confirm to save an
+          Order.
+        </p>
+        <input
+          type="file"
+          accept="application/pdf,.pdf"
+          disabled={busy || extracting || pending !== null}
+          onChange={(e) => {
+            const file = e.target.files?.[0] ?? null
+            void onExtractFile(file)
+            e.target.value = ''
+          }}
+        />
+        {extracting && <p className="muted">Extracting…</p>}
+        <div className="row" style={{ marginTop: '0.75rem' }}>
+          <button
+            type="button"
+            disabled={busy || extracting || pending !== null}
+            onClick={reviewExtractConfirm}
+          >
+            Review extract save…
+          </button>
+        </div>
+      </section>
 
       <section>
         <h2>{editingId === null ? 'New order' : `Edit order #${editingId}`}</h2>

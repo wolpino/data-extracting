@@ -26,8 +26,8 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR1](#pr1--scaffold) | Backend + frontend scaffold | `merged` |
 | [PR2](#pr2--order-crud--activity-log) | Order CRUD + activity log | `merged` |
 | [PR2b](#pr2b--code-comments--agent-mandate) | Code comments + agent mandate | `merged` |
-| [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `ready_for_review` |
-| [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `planned` |
+| [PR3](#pr3--thin-ui--cors) | Thin UI + CORS | `merged` |
+| [PR4](#pr4--gemini-extract--confirm) | Gemini extract + confirm | `ready_for_review` |
 | [PR5](#pr5--deploy--readme) | Deploy + README | `planned` |
 
 ---
@@ -222,11 +222,12 @@ Catch up concise comments on the current codebase and lock an agent mandate so l
 
 ## PR3 — Thin UI + CORS
 
-- **Status:** `ready_for_review`
+- **Status:** `merged`
 - **Branch:** `feature/pr3-ui-cors`
 - **GitHub:** https://github.com/wolpino/data-extracting/pull/5
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
+- **Merged:** 2026-08-07
 - **Depends on:** PR2b merged/approved
 
 ### Scope
@@ -267,49 +268,51 @@ Add CORS allowlist middleware and a thin Orders UI where create/update/delete on
 
 ## PR4 — Gemini extract + confirm
 
-- **Status:** `planned`
-- **Branch:** _(set on start)_
-- **GitHub:** _(set when opened)_
+- **Status:** `ready_for_review`
+- **Branch:** `feature/pr4-extract-confirm`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/6
+- **Started:** 2026-08-07
+- **Opened:** 2026-08-07
 - **Depends on:** PR3 merged/approved
-- **Split rule:** If change set approaches ~20 files, ship **PR4a** (API) then **PR4b** (UI) with separate sections/AC and a midpoint pause
 
 ### Scope
 
-- Extract service: `bytes + content_type → draft` (PDF-only branch in MVP)
+- Extract service: `bytes + content_type → draft` (PDF-only); default model `gemini-3.6-flash`
 - `POST /api/v1/extract` → draft JSON; **does not** persist Order
 - `POST /api/v1/orders/confirm` → creates Order + activity
-- Gemini server-side only; LLM error handling (timeouts/empty/non-PDF)
-- Upload max size limit; PDF type/extension validation
+- Gemini server-side only; LLM error handling; upload size + PDF validation
 - UI: upload PDF → editable draft → Confirm → refresh list
+- Note confirm-banner UX debt for later
 
 ### Acceptance criteria
 
-- [ ] `POST /extract` accepts PDF and returns `{first_name, last_name, date_of_birth}` draft
-- [ ] Non-PDF rejected with 400/415; oversize rejected with clear error
-- [ ] Extract alone creates **zero** Order rows
-- [ ] `POST /orders/confirm` persists Order after human-approved fields (+ optional sanitized filename)
-- [ ] Gemini API key used only on server; not present in frontend bundle/env for browser
-- [ ] LLM/network failures return structured errors (no secret leakage)
-- [ ] UI supports upload → edit draft → Confirm; list updates after confirm
-- [ ] Works against sample PDF in `docs/testdata/`; prompt is generic (unseen-PDF ready)
-- [ ] Activity logged for extract attempt and confirm (metadata only)
-- [ ] If split: PR4a and PR4b each meet their subset of AC and each pause for review
-- [ ] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
+- [x] `POST /extract` accepts PDF and returns `{first_name, last_name, date_of_birth}` draft
+- [x] Non-PDF rejected with 415; oversize rejected with clear error
+- [x] Extract alone creates **zero** Order rows
+- [x] `POST /orders/confirm` persists Order after human-approved fields (+ optional sanitized filename)
+- [x] Gemini API key used only on server; not present in frontend bundle/env for browser
+- [x] LLM/network failures return structured errors (no secret leakage)
+- [x] UI supports upload → edit draft → Confirm; list updates after confirm
+- [x] Works against sample PDF in `docs/testdata/`; prompt is generic (unseen-PDF ready)
+- [x] Activity logged for extract attempt and confirm (metadata only)
+- [x] Living PR log + PROGRESS updated; GitHub PR opened; pause for review
 
 ### Summary
 
-_(fill on finish)_
+Add Gemini PDF extract (draft-only) and `/orders/confirm`, wire thin UI upload → edit → Confirm, default model `gemini-3.6-flash`.
 
 ### Test plan
 
-- [ ] Extract sample PDF; verify draft fields
-- [ ] Confirm creates Order; re-extract without confirm does not
-- [ ] Reject `.txt` / oversize upload
-- [ ] UI confirm path end-to-end locally
+- [x] `./backend/scripts/smoke_extract.sh` (415 non-PDF; extract sample; confirm; extract does not persist)
+- [x] `./backend/scripts/smoke_orders.sh`
+- [x] `cd frontend && npm run build`
+- [ ] Manual UI extract path (reviewer): set `GEMINI_API_KEY` in `backend/.env`
 
 ### Notes / risks
 
-_(fill on finish)_
+- Confirm banner UX remains clunky (known debt) — improve after deploy.
+- Keep secrets in `backend/.env` only — never commit keys (`.env.example` stays empty).
+- Free-tier quota varies by model; override with `GEMINI_MODEL` if needed.
 
 ---
 

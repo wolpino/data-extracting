@@ -75,3 +75,32 @@ export async function deleteOrder(id: number): Promise<void> {
   })
   if (!response.ok) throw new Error(await readError(response))
 }
+
+export type ExtractDraft = {
+  first_name: string
+  last_name: string
+  date_of_birth: string
+}
+
+/** Upload PDF for draft fields — does not persist an Order. */
+export async function extractDocument(file: File): Promise<ExtractDraft> {
+  const body = new FormData()
+  body.append('file', file)
+  const response = await fetch(`${apiBaseUrl}/api/v1/extract`, {
+    method: 'POST',
+    body,
+  })
+  if (!response.ok) throw new Error(await readError(response))
+  return (await response.json()) as ExtractDraft
+}
+
+/** Persist a human-reviewed draft as an Order. */
+export async function confirmOrder(input: OrderInput): Promise<Order> {
+  const response = await fetch(`${apiBaseUrl}/api/v1/orders/confirm`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!response.ok) throw new Error(await readError(response))
+  return (await response.json()) as Order
+}

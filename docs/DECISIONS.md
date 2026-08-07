@@ -70,6 +70,20 @@ Append-only. When a decision changes, add a new entry; do not rewrite history.
 - **Alternatives considered:** Skip roadmap entirely; build roadmap doc before code.
 - **Revisit when:** Writing final README (PR5).
 
+### 2026-08-07 — Gemini model gemini-3.6-flash
+
+- **Decision:** Default `GEMINI_MODEL=gemini-3.6-flash` (overridable via env).
+- **Reasoning:** Available quota / works for PDF structured extract in this account; `gemini-2.0-flash` returned free-tier RESOURCE_EXHAUSTED.
+- **Alternatives considered:** gemini-2.0-flash, gemini-2.5-flash.
+- **Revisit when:** Model deprecation or better latency/cost option.
+
+### 2026-08-07 — Confirm UI UX debt (post-PR3)
+
+- **Decision:** Keep the working top-of-page confirm banner for MVP; improve UX later (modal near action, focus trap, clearer hierarchy).
+- **Reasoning:** Confirm-before-save is REQUIRED; placement/polish is not. User feedback: current alert is not user-friendly.
+- **Alternatives considered:** Fix UX in PR4 (risks scope creep before extract/deploy).
+- **Revisit when:** After PR5 / with-more-time, or a small PR3.1 if clock allows.
+
 ### 2026-08-07 — Concise commenting mandate (PR2b)
 
 - **Decision:** Require clear, concise why/constraint comments on non-obvious code in every PR; catch up existing code in PR2b; document standard in `docs/COMMENTING.md`.
