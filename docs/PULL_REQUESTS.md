@@ -32,7 +32,7 @@ If a PR would exceed ~20 files, split (e.g. PR4a/PR4b), add a new section with i
 | [PR6](#pr6--docs-testdata--manual-checklist) | Docs, Buffy testdata, manual checklist | `merged` |
 | [PR7](#pr7--written-automated-tests) | Written automated tests | `merged` |
 | [PR8](#pr8--ui-functionality) | UI functionality (not polish) | `ready_for_review` |
-| [PR9](#pr9--hardening) | API key + extract rate limit | `in_progress` |
+| [PR9](#pr9--hardening) | API key + extract rate limit | `ready_for_review` |
 | [PR10](#pr10--postgres--alembic) | Postgres + Alembic | `planned` |
 
 ---
@@ -505,11 +505,11 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 
 ## PR9 — Hardening
 
-- **Status:** `in_progress` (API-key slice in #11; rate-limit slice rebased onto it)
-- **Branch:** `feature/pr9-extract-rate-limit` (rate-limit + API key); API-key-only: `feature/pr9-api-key`
-- **GitHub:** API key https://github.com/wolpino/data-extracting/pull/11 ; rate-limit _(open when ready)_
+- **Status:** `ready_for_review` (API key merged #11; rate-limit #12)
+- **Branch:** `feature/pr9-extract-rate-limit`
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/12 (API key was #11, merged)
 - **Started:** 2026-08-07
-- **Opened:** 2026-08-07 (API-key #11)
+- **Opened:** 2026-08-07
 - **Depends on:** PR8 merged/approved
 
 ### Scope
@@ -550,7 +550,7 @@ Primary **Confirm & save Order** button (no second modal), draft badge for extra
 - Set Render `API_KEY` only after UI with sessionStorage field is deployed.
 - Demo key in README is intentional (shared take-home), not production secrecy.
 - In-memory limit is **per process / Render instance** — not shared across multiple instances.
-- Prefer merge order: #11 (API key) → rate-limit branch (already rebased onto it).
+- API key #11 merged to main; this PR is the remaining rate-limit slice.
 
 
 ## PR10 — Postgres + Alembic
