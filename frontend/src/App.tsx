@@ -201,7 +201,7 @@ function App() {
 
   return (
     <main className="app">
-      <h1>Orders</h1>
+      <h1>The Extractor</h1>
       <p className="muted">
         API: <code>{apiBaseUrl}</code> — review extracted fields, then{' '}
         <strong>Confirm &amp; save</strong> (or create/save manually).
@@ -212,7 +212,7 @@ function App() {
         <input
           type="password"
           autoComplete="off"
-          placeholder="Paste from README when API_KEY is set on the server"
+          placeholder="demo-reviewer-key"
           value={apiKeyInput}
           onChange={(e) => {
             const value = e.target.value
@@ -222,8 +222,9 @@ function App() {
         />
       </label>
       <p className="muted api-key-hint">
-        Stored in sessionStorage only (not baked into the Vite build). Leave
-        blank for local APIs with no <code>API_KEY</code>.
+        Needed only when the API has <code>API_KEY</code> set (same value as
+        README / Render). Leave blank for local APIs with no key. Stored in
+        sessionStorage only — not in the Vite build.
       </p>
 
       {error && (
