@@ -5,7 +5,7 @@ Agents: read this first; update before pausing. Also update [PULL_REQUESTS.md](.
 ## Current
 
 - **Phase:** PR4 — Gemini extract + confirm
-- **Status:** Opening GitHub PR — **do not start PR5 until approved**
+- **Status:** PR open — https://github.com/wolpino/data-extracting/pull/6 — **do not start PR5 until approved**
 
 ## Done
 

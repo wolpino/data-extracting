@@ -270,7 +270,7 @@ Add CORS allowlist middleware and a thin Orders UI where create/update/delete on
 
 - **Status:** `ready_for_review`
 - **Branch:** `feature/pr4-extract-confirm`
-- **GitHub:** _(filled after open)_
+- **GitHub:** https://github.com/wolpino/data-extracting/pull/6
 - **Started:** 2026-08-07
 - **Opened:** 2026-08-07
 - **Depends on:** PR3 merged/approved
